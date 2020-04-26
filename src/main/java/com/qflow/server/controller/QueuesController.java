@@ -38,7 +38,7 @@ public class QueuesController {
 
     @PostMapping
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<Queue> postOrganization(
+    public ResponseEntity<Queue> postQueue(
             @RequestBody @Valid final QueuePost queuePost,
             @RequestHeader @Valid final String token
     ) {
