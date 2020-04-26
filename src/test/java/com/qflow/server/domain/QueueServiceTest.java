@@ -56,7 +56,6 @@ public class QueueServiceTest {
     @Test
     void getQueueById_queueIdNotExists_Exception(){
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.empty());
-
         assertThrows(QueueNotFoundException.class, () -> this.queueService.getQueue(1));
     }
 

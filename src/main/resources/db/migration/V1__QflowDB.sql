@@ -1,4 +1,4 @@
-create table queue
+create table IF NOT EXISTS queue
 (
     id                  serial not null
         constraint queue_pk
@@ -20,7 +20,7 @@ alter table queue
 create unique index queue_join_id_uindex
     on queue (join_id);
 
-create table active_period
+create table IF NOT EXISTS  active_period
 (
     id                serial not null
         constraint active_period_pk
@@ -35,7 +35,7 @@ create table active_period
 alter table active_period
     owner to postgres;
 
-create table rate_queue
+create table IF NOT EXISTS  rate_queue
 (
     id      serial not null
         constraint rate_queue_pk
@@ -47,7 +47,7 @@ create table rate_queue
 alter table rate_queue
     owner to postgres;
 
-create table users
+create table IF NOT EXISTS  users
 (
     id              serial not null
         constraint users_pk
@@ -67,7 +67,7 @@ alter table users
 create unique index users_token_uindex
     on users (token);
 
-create table info_user_queue
+create table IF NOT EXISTS info_user_queue
 (
     id              serial not null
         constraint info_user_queue_pk
@@ -92,7 +92,7 @@ alter table info_user_queue
 create unique index info_user_queue_id_uindex
     on info_user_queue (id);
 
-create table queue_user
+create table IF NOT EXISTS queue_user
 (
     id             serial not null
         constraint queue_user_pk

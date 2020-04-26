@@ -31,7 +31,7 @@ public class QueueService implements GetQueueDatabase, CreateQueueDatabase {
 
         Optional<QueueDB> queueDBOptional = queueRepository.findById(idQueue);
         if(!queueDBOptional.isPresent()){
-          throw new QueueNotFoundException("Queue with id: " + idQueue + "not found");
+          throw new QueueNotFoundException("Queue with id: " + idQueue + " not found");
         }
         return queueAdapter.queueDBToQueue(queueDBOptional.get());
     }
