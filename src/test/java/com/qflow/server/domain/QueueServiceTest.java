@@ -1,4 +1,4 @@
-package domain;
+package com.qflow.server.domain;
 
 import com.qflow.server.adapter.QueueAdapter;
 import com.qflow.server.domain.repository.QueueRepository;

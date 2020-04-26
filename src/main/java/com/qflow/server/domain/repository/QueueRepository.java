@@ -10,7 +10,7 @@ public interface QueueRepository extends JpaRepository<QueueDB, Integer> {
 
     @Query(value = "SELECT x " +
             "FROM y " +
-            "WHERE queueName",
+            "WHERE :queueName",
             nativeQuery = true)
     Queue findApplicationByName(@Param("queueName") String queueName);
 

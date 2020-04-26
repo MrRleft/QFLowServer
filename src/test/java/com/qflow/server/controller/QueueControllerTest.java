@@ -1,6 +1,7 @@
-package controller;
+package com.qflow.server.controller;
 
 import com.qflow.server.adapter.QueueAdapter;
+import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.entity.Queue;
 import com.qflow.server.usecase.queues.CreateQueue;
 import com.qflow.server.usecase.queues.GetQueue;
@@ -28,6 +29,9 @@ public class QueueControllerTest {
 
     @MockBean
     private CreateQueue createQueue;
+
+    @MockBean
+    private QueueService queueService;
 
     private final QueueAdapter queueAdapter = new QueueAdapter();
 
