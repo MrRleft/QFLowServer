@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: qflowserver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/qflow?currentSchema=public&stringtype=unspecified
+    username: postgres
+    password: qflow
+
+server:
+  port: 8445
+
+# Debug query JPA
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
+hibernate:
+  types:
+    print:
+      banner: false
+
+
+#    # Feign configuration
+#feign:
+#  client:
+#    config:
+#      default:
+#        loggerLevel: FULL
+#
+#hystrix:
+#  command:
+#    HystrixCommandKey:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 5000
