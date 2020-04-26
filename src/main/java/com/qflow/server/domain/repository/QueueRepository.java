@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface QueueRepository extends JpaRepository<QueueDB, Integer> {
-
-    @Query(value = "SELECT x " +
-            "FROM y " +
-            "WHERE :queueName",
-            nativeQuery = true)
-    Queue findApplicationByName(@Param("queueName") String queueName);
+//
+//    @Query(value = "SELECT x " +
+//            "FROM y " +
+//            "WHERE :queueName",
+//            nativeQuery = true)
+//    Queue findApplicationByName(@Param("queueName") String queueName);
 
 }

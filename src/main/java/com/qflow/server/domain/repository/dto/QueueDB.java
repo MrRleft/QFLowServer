@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "Queues")
+@Table(name = "queue")
 public class QueueDB {
 
     @Id
@@ -100,5 +100,8 @@ public class QueueDB {
         this.isLocked = isLocked;
         this.dateCreated = dateCreated;
         this.dateFinished = dateFinished;
+    }
+
+    public QueueDB() {
     }
 }
