@@ -11,7 +11,7 @@ public class QueueDB {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 32)
+    @Column(length = 256)
     private String name;
 
     @Column(length = 256)
