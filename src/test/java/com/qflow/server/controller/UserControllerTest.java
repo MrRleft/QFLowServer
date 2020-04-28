@@ -1,9 +1,10 @@
 package com.qflow.server.controller;
 
-import com.qflow.server.adapter.QueueAdapter;
+import com.qflow.server.adapter.UserAdapter;
+import com.qflow.server.domain.repository.QueueRepository;
 import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.domain.service.UserService;
-import com.qflow.server.entity.Queue;
+import com.qflow.server.entity.User;
 import com.qflow.server.usecase.queues.CreateQueue;
 import com.qflow.server.usecase.queues.GetQueue;
 import com.qflow.server.usecase.users.GetUserByToken;
@@ -24,7 +25,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class QueueControllerTest {
+public class UserControllerTest {
+    @MockBean
+    private GetUserByToken getUserByToken;
+
+    /*
+    @MockBean
+    private CreateUser createUser;
+    */
+
+    @MockBean
+    private UserService userService;
 
     @MockBean
     private GetQueue getQueue;
@@ -36,11 +47,9 @@ public class QueueControllerTest {
     private QueueService queueService;
 
     @MockBean
-    private GetUserByToken getUserByToken;
+    private QueueRepository queueRepository;
 
-    @MockBean
-    private UserService userService;
-    private final QueueAdapter queueAdapter = new QueueAdapter();
+    private final UserAdapter userAdapter = new UserAdapter();
 
     @LocalServerPort
     private int port;
@@ -59,15 +68,15 @@ public class QueueControllerTest {
     }
 
     @Test
-    void getQueue_queueId_queue(){
+    void setGetUserByToken_token_user(){
 
-        Queue queueMock = Queue.QueueBuilder.aQueue().withId(1).build();
+        User userMock = User.UserBuilder.anUser().withToken("kilo").build();
 
-        Mockito.when(this.getQueue.execute(1)).thenReturn(queueMock);
+        Mockito.when(this.getUserByToken.execute("kilo")).thenReturn(userMock);
 
 
         final ResponseEntity response =
-                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/1", this.port),
+                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/users/kilo", this.port),
                         HttpMethod.GET,
                         new HttpEntity<>(new HttpHeaders()),
                         String.class,
@@ -76,8 +85,6 @@ public class QueueControllerTest {
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertTrue(((String) response.getBody()).contains("1"));
-
+        assertTrue(((String) response.getBody()).contains("kilo"));
     }
-
 }
