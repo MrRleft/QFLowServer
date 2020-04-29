@@ -11,13 +11,14 @@ import com.qflow.server.entity.exceptions.QueueuAlreadyExistsException;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
 import com.qflow.server.usecase.queues.CreateQueueDatabase;
 import com.qflow.server.usecase.queues.GetQueueDatabase;
+import com.qflow.server.usecase.queues.JoinQueueDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class QueueService implements GetQueueDatabase, CreateQueueDatabase {
+public class QueueService implements GetQueueDatabase, CreateQueueDatabase, JoinQueueDatabase {
 
 
     final private QueueRepository queueRepository;
@@ -58,5 +59,12 @@ public class QueueService implements GetQueueDatabase, CreateQueueDatabase {
         }
     }
 
-
+    @Override
+    public Queue joinQueue(Integer idQueue, Integer idUser) {
+        Optional<QueueDB> queueDBOptional = queueRepository.joinQueue(idQueue,idUser);
+        if(!queueDBOptional.isPresent()){
+            throw new QueueNotFoundException("Queue with id:  is full");
+        }
+        return queueAdapter.queueDBToQueue(queueDBOptional.get());
+    }
 }

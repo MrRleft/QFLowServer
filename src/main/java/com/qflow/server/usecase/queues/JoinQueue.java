@@ -1,16 +1,24 @@
 package com.qflow.server.usecase.queues;
 
 import com.qflow.server.entity.Queue;
+import com.qflow.server.entity.User;
+import com.qflow.server.usecase.users.GetUserByTokenDatabase;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class JoinQueue {
 
     private final JoinQueueDatabase joinQueueDatabase;
-
-    public JoinQueue(CreateQueueDatabase createQueueDatabase) {
+    private final GetUserByTokenDatabase getUserByTokenDatabase;
+    public JoinQueue(JoinQueueDatabase joinQueueDatabase,
+                     @Autowired GetUserByTokenDatabase getUserByTokenDatabase) {
         this.joinQueueDatabase = joinQueueDatabase;
+        this.getUserByTokenDatabase = getUserByTokenDatabase;
     }
 
-    public Queue execute(Queue queue, String userToken){
-        return joinQueueDatabase.joinQueue(queue, userToken);
+    //TODO revisar
+    public Queue execute(Integer idQueue, String userToken){
+        User userByToken = getUserByTokenDatabase.getUserByToken(userToken);
+        userByToken.getId();
+        return joinQueueDatabase.joinQueue(idQueue, userByToken.getId());
     }
 }

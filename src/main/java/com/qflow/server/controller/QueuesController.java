@@ -5,6 +5,7 @@ import com.qflow.server.controller.dto.QueuePost;
 import com.qflow.server.entity.Queue;
 import com.qflow.server.usecase.queues.CreateQueue;
 import com.qflow.server.usecase.queues.GetQueue;
+import com.qflow.server.usecase.queues.JoinQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +20,17 @@ public class QueuesController {
 
     private final GetQueue getQueue;
     private final CreateQueue createQueue;
+    private final JoinQueue joinQueue;
     private final QueueAdapter queueAdapter;
 
 
     public QueuesController(@Autowired final GetQueue getQueue,
                             @Autowired final CreateQueue createQueue,
+                            @Autowired final JoinQueue joinQueue,
                             @Autowired final QueueAdapter queueAdapter) {
         this.getQueue = getQueue;
         this.createQueue = createQueue;
+        this.joinQueue = joinQueue;
         this.queueAdapter = queueAdapter;
     }
 
@@ -43,6 +47,19 @@ public class QueuesController {
     ) {
         createQueue.execute(queueAdapter.queuePostToQueue(queuePost), token);
         return new ResponseEntity<>("Queue created", HttpStatus.OK);
+    }
+
+    // TODO
+    @PostMapping
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<Queue> joinQueue(
+            @RequestBody @Valid final QueuePost queuePost,
+            @RequestHeader @Valid final String token
+    ) {
+        return new ResponseEntity<Queue>(
+                this.joinQueue.execute(
+                        this.queueAdapter.queuePostToQueue(queuePost), token
+                ), HttpStatus.CREATED);
     }
 }
 
