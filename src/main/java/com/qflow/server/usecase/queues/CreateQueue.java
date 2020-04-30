@@ -16,8 +16,8 @@ public class CreateQueue {
         this.getUserByToken = getUserByToken;
     }
 
-    public Queue execute(Queue queue, String userToken){
+    public void execute(Queue queue, String userToken){
         User u = getUserByToken.execute(userToken);
-        return createQueueDatabase.createQueue(queue, u.getId());
+        createQueueDatabase.createQueue(queue, u.getId());
     }
 }

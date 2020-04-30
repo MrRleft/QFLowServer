@@ -6,8 +6,7 @@ import com.qflow.server.domain.repository.dto.QueueDB;
 import com.qflow.server.domain.repository.dto.UserDB;
 import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.entity.Queue;
-import com.qflow.server.entity.User;
-import com.qflow.server.entity.exceptions.QueueNotCreatedException;
+import com.qflow.server.entity.exceptions.QueueuAlreadyExistsException;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,19 +67,49 @@ public class QueueServiceTest {
     }
 
     @Test
-    void createQueue_queue_queue() {
-        Mockito.when(queueRepository.createQueue(queueDBMock, 1))
-                .thenReturn(Optional.of(queueDBMock));
+    void createQueue_queueAlreadyExists_queue() {
+        Queue queueToCreate = Queue.QueueBuilder.aQueue()
+                                .withJoinId("1133").build();
+        QueueDB queueDB = new QueueDB();
+        Mockito.when(queueRepository.findQueueByJoinId("1133")).thenReturn(Optional.of(queueDB));
 
-        Queue res = queueService.createQueue(queueAdapter.queueDBToQueue(queueDBMock), 1);
-
-        assertEquals(res.getName(), "Example");
+        assertThrows(QueueuAlreadyExistsException.class, () -> this.queueService.createQueue(queueToCreate, 1));
     }
 
     @Test
-    void createQueue_queueIdNotExists_Exception(){
-        Mockito.when(queueRepository.createQueue(queueDBMock, userDBMock.getId())).thenReturn(Optional.empty());
-        assertThrows(QueueNotCreatedException.class, () -> this.queueService.getQueue(3));
+    void createQueue_queue(){
+        Queue queueToCreate = Queue.QueueBuilder.aQueue()
+                .withJoinId("1133").build();
+
+        this.queueService.createQueue(queueToCreate, 1);
+        Mockito.verify(queueRepository).save(Mockito.any());
     }
 
 }
+
+
+/*
+@Test
+void createUser_userExists_UserNotCreatedException(){
+    User userToCreate = User.UserBuilder.anUser()
+            .withEmail("example")
+            .withIsAdmin(true)
+            .build();
+    UserDB userDB = new UserDB();
+    Mockito.when(userRepository.findUserByEmailAndisAdmin("example", true))
+            .thenReturn(Optional.of(userDB));
+    assertThrows(UserAlreadyExistsException.class, () -> this.userService.createUser(userToCreate));
+}
+
+@Test
+void createUser_userNotExists_na(){
+
+    User userToCreate = User.UserBuilder.anUser()
+            .withEmail("example")
+            .withIsAdmin(true)
+            .build();
+
+    this.userService.createUser(userToCreate);
+    Mockito.verify(userRepository).save(Mockito.any());
+}
+* */

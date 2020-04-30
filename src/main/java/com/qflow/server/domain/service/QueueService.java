@@ -4,7 +4,7 @@ import com.qflow.server.adapter.QueueAdapter;
 import com.qflow.server.domain.repository.QueueRepository;
 import com.qflow.server.domain.repository.dto.QueueDB;
 import com.qflow.server.entity.Queue;
-import com.qflow.server.entity.exceptions.QueueNotCreatedException;
+import com.qflow.server.entity.exceptions.QueueuAlreadyExistsException;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
 import com.qflow.server.usecase.queues.CreateQueueDatabase;
 import com.qflow.server.usecase.queues.GetQueueDatabase;
@@ -38,17 +38,14 @@ public class QueueService implements GetQueueDatabase, CreateQueueDatabase {
     }
 
     @Override
-    public Queue createQueue(Queue queue, int userId) {
-        //TODO add to queueToAdd queue using QueueAdapter
-        Optional<QueueDB> queueToAdd = queueRepository.createQueue(queueAdapter.queueToQueueDB(queue), userId);
+    public void createQueue(Queue queue, int userId) {
 
-        if(!queueToAdd.isPresent()){
-            throw new QueueNotCreatedException("Queue with id: " +
-                    queueAdapter.queueToQueueDB(queue).getId() + " not created");
+        if(!queueRepository.findQueueByJoinId(queue.getJoinId()).isPresent()){
+            queueRepository.save(queueAdapter.queueToQueueDB(queue));
+        }else{
+            throw new QueueuAlreadyExistsException("Queue with join Id: " + queue.getJoinId() + " already exists");
         }
-        //TODO add corresponding data to Users-Queue
-
-
-        return queueAdapter.queueDBToQueue(queueToAdd.get());
     }
+
+
 }
