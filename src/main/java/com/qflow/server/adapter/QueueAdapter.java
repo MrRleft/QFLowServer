@@ -28,9 +28,20 @@ public class QueueAdapter {
     }
 
     public Queue queuePostToQueue(QueuePost queuePost) {
-        //TODO do this adapter
-        return new Queue();
+        return Queue.QueueBuilder.aQueue()
+                .withBusinessAssociated(queuePost.getBusinessAssociated())
+                .withCapacity(queuePost.getCapacity())
+                .withCurrentPos(queuePost.getCurrentPos())
+                .withDateCreated(queuePost.getDateCreated())
+                .withDateFinished(queuePost.getDateFinished())
+                .withDescription(queuePost.getDescription())
+                .withId(queuePost.getId())
+                .withIsLock(queuePost.getLock())
+                .withJoinId(queuePost.getJoinId())
+                .withName(queuePost.getName())
+                .build();
     }
+
 
     public QueueDB queueToQueueDB(Queue queue)
     {
