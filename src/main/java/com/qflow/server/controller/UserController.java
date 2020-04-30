@@ -1,8 +1,11 @@
 package com.qflow.server.controller;
 
 import com.qflow.server.adapter.UserAdapter;
+import com.qflow.server.controller.dto.UserPost;
 import com.qflow.server.entity.User;
 import com.qflow.server.entity.exceptions.LoginNotSuccesfulException;
+import com.qflow.server.usecase.queues.CreateQueue;
+import com.qflow.server.usecase.users.CreateUser;
 import com.qflow.server.usecase.users.GetUserByToken;
 import com.qflow.server.usecase.users.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,20 +13,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("qflow/user")
-public class UsersController {
+public class UserController {
 
     private final GetUserByToken getUserByToken;
-    private final UserAdapter userAdapter;
     private final LoginUser loginUser;
+    private final CreateUser createUser;
+    private final UserAdapter userAdapter;
 
-    public UsersController(@Autowired GetUserByToken getUserByToken,
-                           @Autowired UserAdapter userAdapter,
-                           @Autowired LoginUser loginUser) {
+    public UserController(@Autowired GetUserByToken getUserByToken,
+                          @Autowired CreateUser createUser,
+                          @Autowired UserAdapter userAdapter,
+                          @Autowired LoginUser loginUser) {
         this.getUserByToken = getUserByToken;
         this.userAdapter = userAdapter;
         this.loginUser = loginUser;
+        this.createUser = createUser;
     }
 
     @GetMapping("/token/{token}")
@@ -41,13 +49,26 @@ public class UsersController {
         mail = org.owasp.encoder.Encode.forJava(mail);
         password = org.owasp.encoder.Encode.forJava(password);
 
-        try{
+        try {
             return new ResponseEntity<>(
                     this.loginUser.execute(isAdmin, mail, password), HttpStatus.OK);
-        }
-        catch (LoginNotSuccesfulException loginNotSuccesfulException){
+        } catch (LoginNotSuccesfulException loginNotSuccesfulException) {
             return new ResponseEntity<>("Login was not successful", HttpStatus.NO_CONTENT);
         }
     }
+
+    @PostMapping("/")
+    public ResponseEntity<String> loginUser(
+            @RequestHeader(value = "isAdmin") final boolean isAdmin,
+            @Valid @RequestBody UserPost userPost) {
+
+        User userToCreate = userAdapter.userPostToUser(userPost, isAdmin);
+
+        createUser.execute(userToCreate);
+
+        return new ResponseEntity<>("User created", HttpStatus.OK);
+
+    }
+
 
 }

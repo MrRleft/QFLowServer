@@ -1,5 +1,6 @@
 package com.qflow.server.adapter;
 
+import com.qflow.server.controller.dto.UserPost;
 import com.qflow.server.domain.repository.dto.UserDB;
 import com.qflow.server.entity.User;
 
@@ -18,6 +19,16 @@ public class UserAdapter {
                 .withProfilePicture(userDB.getProfilePicture())
                 .withToken(userDB.getToken())
                 .withUsername(userDB.getUsername())
+                .build();
+    }
+
+    public User userPostToUser(UserPost userPost, boolean isAdmin) {
+        return User.UserBuilder.anUser()
+                .withEmail(userPost.getEmail())
+                .withIsAdmin(isAdmin)
+                .withNameLastname(userPost.getNameLastName())
+                .withPassword(userPost.getPassword())
+                .withUsername(userPost.getUsername())
                 .build();
     }
 }

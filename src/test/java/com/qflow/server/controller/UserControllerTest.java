@@ -1,6 +1,7 @@
 package com.qflow.server.controller;
 
 import com.qflow.server.adapter.UserAdapter;
+import com.qflow.server.controller.dto.UserPost;
 import com.qflow.server.domain.repository.QueueRepository;
 import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.domain.service.UserService;
@@ -8,6 +9,7 @@ import com.qflow.server.entity.User;
 import com.qflow.server.entity.exceptions.LoginNotSuccesfulException;
 import com.qflow.server.usecase.queues.CreateQueue;
 import com.qflow.server.usecase.queues.GetQueue;
+import com.qflow.server.usecase.users.CreateUser;
 import com.qflow.server.usecase.users.GetUserByToken;
 import com.qflow.server.usecase.users.LoginUser;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +50,9 @@ public class UserControllerTest {
     private LoginUser loginUser;
 
     @MockBean
+    private CreateUser createUser;
+
+    @MockBean
     private CreateQueue createQueue;
 
     @MockBean
@@ -69,7 +74,7 @@ public class UserControllerTest {
         restTemplate.getRestTemplate().setInterceptors(
                 Collections.singletonList((request, body, execution) -> {
                     request.getHeaders()
-                            .add("Token", "ExampleToken");
+                            .add("isAdmin", "true");
                     return execution.execute(request, body);
                 }));
     }
@@ -206,5 +211,24 @@ public class UserControllerTest {
 
         assertNotNull(response);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void createUser_userPost_na(){
+
+        UserPost userPost = UserPost.UserPostBuilder.anUserPost()
+                .withUserName("name")
+                .build();
+
+        final ResponseEntity response =
+                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/user/", this.port),
+                        HttpMethod.POST,
+                        new HttpEntity<>(userPost, new HttpHeaders()),
+                        String.class,
+                        new Object());
+
+        Mockito.verify(createUser).execute(Mockito.any());
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
