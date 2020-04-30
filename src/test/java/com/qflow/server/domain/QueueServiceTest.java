@@ -48,7 +48,7 @@ public class QueueServiceTest {
     void getQueueById_queueId_queue(){
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.of(queueDBMock));
 
-        Queue res = queueService.getQueue(1);
+        Queue res = queueService.getQueueByQueueId(1);
 
         assertEquals(res.getName(), "Example");
     }
@@ -56,7 +56,7 @@ public class QueueServiceTest {
     @Test
     void getQueueById_queueIdNotExists_Exception(){
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.empty());
-        assertThrows(QueueNotFoundException.class, () -> this.queueService.getQueue(1));
+        assertThrows(QueueNotFoundException.class, () -> this.queueService.getQueueByQueueId(1));
     }
 
 

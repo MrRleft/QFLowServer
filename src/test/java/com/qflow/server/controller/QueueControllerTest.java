@@ -5,7 +5,7 @@ import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.domain.service.UserService;
 import com.qflow.server.entity.Queue;
 import com.qflow.server.usecase.queues.CreateQueue;
-import com.qflow.server.usecase.queues.GetQueue;
+import com.qflow.server.usecase.queues.GetQueueByQueueId;
 import com.qflow.server.usecase.users.GetUserByToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class QueueControllerTest {
 
     @MockBean
-    private GetQueue getQueue;
+    private GetQueueByQueueId getQueueByQueueId;
 
     @MockBean
     private CreateQueue createQueue;
@@ -63,7 +63,7 @@ public class QueueControllerTest {
 
         Queue queueMock = Queue.QueueBuilder.aQueue().withId(1).build();
 
-        Mockito.when(this.getQueue.execute(1)).thenReturn(queueMock);
+        Mockito.when(this.getQueueByQueueId.execute(1)).thenReturn(queueMock);
 
 
         final ResponseEntity response =

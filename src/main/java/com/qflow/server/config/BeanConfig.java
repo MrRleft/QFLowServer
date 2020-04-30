@@ -5,7 +5,8 @@ import com.qflow.server.adapter.UserAdapter;
 import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.domain.service.UserService;
 import com.qflow.server.usecase.queues.CreateQueue;
-import com.qflow.server.usecase.queues.GetQueue;
+import com.qflow.server.usecase.queues.GetQueueByQueueId;
+import com.qflow.server.usecase.queues.GetQueuesByUserId;
 import com.qflow.server.usecase.users.GetUserByToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +22,13 @@ public class BeanConfig {
     }
 
     @Bean
-    public GetQueue getQueue(@Autowired QueueService queueService){
-        return new GetQueue(queueService);
+    public GetQueueByQueueId getQueueByQueueId(@Autowired QueueService queueService){
+        return new GetQueueByQueueId(queueService);
+    }
+
+    @Bean
+    public GetQueuesByUserId getQueuesByUserId(@Autowired QueueService queueService){
+        return new GetQueuesByUserId(queueService);
     }
 
     @Bean

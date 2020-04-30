@@ -6,14 +6,16 @@ import com.qflow.server.domain.repository.dto.QueueDB;
 import com.qflow.server.entity.Queue;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
 import com.qflow.server.usecase.queues.CreateQueueDatabase;
-import com.qflow.server.usecase.queues.GetQueueDatabase;
+import com.qflow.server.usecase.queues.GetQueueByQueueIdDatabase;
+import com.qflow.server.usecase.queues.GetQueuesByUserIdDatabase;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class QueueService implements GetQueueDatabase, CreateQueueDatabase {
+public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueIdDatabase, CreateQueueDatabase {
 
 
     final private QueueRepository queueRepository;
@@ -27,11 +29,26 @@ public class QueueService implements GetQueueDatabase, CreateQueueDatabase {
     }
 
     @Override
-    public Queue getQueue(int idQueue) {
+    public Queue getQueuesByUserId(String expand, int idUser, boolean locked) {
 
+        Optional<QueueDB> queueDBOptional;
+        if(expand == "all"){
+            queueDBOptional = queueRepository.getQueuesByUserId(idUser, locked);
+        }else{
+            queueDBOptional = queueRepository.getAllQueues(locked);
+        }
+        if(!queueDBOptional.isPresent()){
+            throw new QueueNotFoundException("Queues not found");
+        }
+        return queueAdapter.queueDBToQueue(queueDBOptional.get());
+
+    }
+
+    @Override
+    public Queue getQueueByQueueId(int idQueue) {
         Optional<QueueDB> queueDBOptional = queueRepository.findById(idQueue);
         if(!queueDBOptional.isPresent()){
-          throw new QueueNotFoundException("Queue with id: " + idQueue + " not found");
+            throw new QueueNotFoundException("Queue with id: " + idQueue + " not found");
         }
         return queueAdapter.queueDBToQueue(queueDBOptional.get());
     }
@@ -44,4 +61,5 @@ public class QueueService implements GetQueueDatabase, CreateQueueDatabase {
         //TODO add corresponding data to Users-Queue
         return null;
     }
+
 }

@@ -5,8 +5,6 @@ import com.qflow.server.adapter.UserAdapter;
 import com.qflow.server.controller.dto.QueuePost;
 import com.qflow.server.entity.Queue;
 import com.qflow.server.entity.User;
-import com.qflow.server.usecase.queues.CreateQueue;
-import com.qflow.server.usecase.queues.GetQueue;
 import com.qflow.server.usecase.users.GetUserByToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

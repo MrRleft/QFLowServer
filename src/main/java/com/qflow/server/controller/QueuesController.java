@@ -4,7 +4,8 @@ import com.qflow.server.adapter.QueueAdapter;
 import com.qflow.server.controller.dto.QueuePost;
 import com.qflow.server.entity.Queue;
 import com.qflow.server.usecase.queues.CreateQueue;
-import com.qflow.server.usecase.queues.GetQueue;
+import com.qflow.server.usecase.queues.GetQueuesByUserId;
+import com.qflow.server.usecase.queues.GetQueueByQueueId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,23 +18,38 @@ import javax.validation.Valid;
 @RequestMapping("qflow/queues")
 public class QueuesController {
 
-    private final GetQueue getQueue;
+    private final GetQueuesByUserId getQueuesByUserId;
+    private final GetQueueByQueueId getQueueByQueueId;
     private final CreateQueue createQueue;
     private final QueueAdapter queueAdapter;
 
 
-    public QueuesController(@Autowired final GetQueue getQueue,
+
+    public QueuesController(@Autowired final GetQueuesByUserId getQueuesByUserId,
+                            @Autowired final GetQueueByQueueId getQueueByQueueId,
                             @Autowired final CreateQueue createQueue,
                             @Autowired final QueueAdapter queueAdapter) {
-        this.getQueue = getQueue;
+        this.getQueuesByUserId = getQueuesByUserId;
+        this.getQueueByQueueId = getQueueByQueueId;
         this.createQueue = createQueue;
         this.queueAdapter = queueAdapter;
     }
 
+
+    @GetMapping("/{idUser}")
+    public ResponseEntity<Queue> getQueuesByUserId(
+            @PathVariable("idUser") final int idUser,
+            @RequestParam(required = false) String expand,
+            @RequestParam(required = false) boolean locked) {
+        return new ResponseEntity<>(
+                this.getQueuesByUserId.execute(expand, idUser, locked), HttpStatus.OK);
+    }
+
+
     @GetMapping("/{idQueue}")
     public ResponseEntity<Queue> getQueue(@PathVariable("idQueue") final int idQueue) {
         return new ResponseEntity<>(
-                this.getQueue.execute(idQueue), HttpStatus.OK);
+                this.getQueueByQueueId.execute(idQueue), HttpStatus.OK);
     }
 
     @PostMapping
@@ -48,3 +64,42 @@ public class QueuesController {
                 ), HttpStatus.CREATED);
     }
 }
+
+/*
+@GetMapping(produces = "application/json")
+    public ResponseEntity<EntityModel<?>> getApiList(
+            @RequestParam(value = "_limit", required = false, defaultValue = "9") final int limit,
+            @RequestParam(value = "_offset", required = false, defaultValue = "0") final int offset,
+            @RequestParam(value = "_sort", required = false, defaultValue = "+title") final String sort,
+            @RequestParam(value = "_search", required = false, defaultValue = "") final String search,
+            @RequestParam(value = "_expand", required = false, defaultValue = "") final String expand,
+            @RequestParam(value = "entity", required = false, defaultValue = "-1") final int entityAL,
+            @RequestHeader(value = "x-organization-id", required = false, defaultValue = "") final String organizationIdHeader
+            ) {
+
+        final String organizationConsumerId = "".equals(organizationIdHeader) ? null : organizationIdHeader;
+
+        final String sortFilter = org.owasp.encoder.Encode.forJava(sort);
+        final String searchFilter = org.owasp.encoder.Encode.forJava(search);
+        final String expandFilter = org.owasp.encoder.Encode.forJava(expand);
+
+        // Check Request Params
+        utilsController.checkParamsOfGetApiList(limit, expandFilter, 0, 50, Arrays.asList(ALL, PRODUCTS));
+
+        final List<ApiWithALProductsAndApiSpec> allApiList =
+                this.getApiList.execute(limit, offset, sortFilter, searchFilter,
+                        expandFilter, organizationConsumerId, entityAL);
+
+        // Get total APIs: _count
+        final int totalApis = apiService.getCountApis(searchFilter, organizationConsumerId);
+        final APIList apiList = new APIList(generateApisEmbedded(allApiList, expandFilter), totalApis);
+
+        final EntityModel<?> response = new EntityModel<>(apiList);
+
+        // Hateoas
+        utilsController.generatePaginationLinksHateoas(response, offset, limit, totalApis,
+                utilsController.getCurrentURI());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+ */
