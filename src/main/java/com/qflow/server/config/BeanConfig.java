@@ -7,6 +7,7 @@ import com.qflow.server.domain.service.UserService;
 import com.qflow.server.usecase.queues.CreateQueue;
 import com.qflow.server.usecase.queues.GetQueue;
 import com.qflow.server.usecase.users.GetUserByToken;
+import com.qflow.server.usecase.users.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,11 @@ public class BeanConfig {
     @Bean
     public GetUserByToken getUserByToken(@Autowired UserService userService){
         return new GetUserByToken(userService);
+    }
+
+    @Bean
+    public LoginUser LoginUser(@Autowired UserService userService){
+        return new LoginUser(userService);
     }
 
     @Bean
