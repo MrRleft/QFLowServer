@@ -5,6 +5,7 @@ import com.qflow.server.domain.repository.UserRepository;
 import com.qflow.server.domain.repository.dto.UserDB;
 import com.qflow.server.domain.service.UserService;
 import com.qflow.server.entity.User;
+import com.qflow.server.entity.exceptions.LoginNotSuccesfulException;
 import com.qflow.server.entity.exceptions.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -55,6 +55,22 @@ public class UserServiceTest {
     void getUserByToken_userTokenNotExists_Exception(){
         Mockito.when(userRepository.findUserByToken("kilo")).thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class, () -> this.userService.getUserByToken("kilo"));
+    }
+
+    @Test
+    void loginUser_mailPassIsAdmin_token() {
+        Mockito.when(userRepository.findUserByEmailAndPassword("vic@vic.es", "123", true))
+                .thenReturn(Optional.of(userDBMock));
+
+        String res = userService.loginUser(true, "vic@vic.es", "123");
+
+        assertEquals("kilo", res);
+    }
+
+    @Test
+    void loginUser_mailPassIsAdmin_LoginNotSuccessfulException(){
+        assertThrows(LoginNotSuccesfulException.class, () ->
+                this.userService.loginUser(true, "vic@vic", "123"));
     }
 
 }

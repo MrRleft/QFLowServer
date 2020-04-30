@@ -7,6 +7,7 @@ import com.qflow.server.entity.Queue;
 import com.qflow.server.usecase.queues.CreateQueue;
 import com.qflow.server.usecase.queues.GetQueue;
 import com.qflow.server.usecase.users.GetUserByToken;
+import com.qflow.server.usecase.users.LoginUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -37,6 +38,9 @@ public class QueueControllerTest {
 
     @MockBean
     private GetUserByToken getUserByToken;
+
+    @MockBean
+    private LoginUser loginUser;
 
     @MockBean
     private UserService userService;
