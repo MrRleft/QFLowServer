@@ -24,4 +24,13 @@ public interface UserRepository extends JpaRepository<UserDB, Integer> {
     Optional<UserDB> findUserByEmailAndPassword(@Param("email") String email,
                                     @Param("password") String password,
                                     @Param("isAdmin") boolean isAdmin);
+
+    @Query(value = "SELECT *\n" +
+            "FROM users\n" +
+            "WHERE email = :email " +
+            "AND is_admin = :isAdmin",
+            nativeQuery = true)
+    Optional<UserDB> findUserByEmailAndisAdmin(
+            @Param("email") String email,
+            @Param("isAdmin") boolean isAdmin);
 }
