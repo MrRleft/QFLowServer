@@ -4,6 +4,7 @@ import com.qflow.server.adapter.QueueAdapter;
 import com.qflow.server.domain.repository.QueueRepository;
 import com.qflow.server.domain.repository.dto.QueueDB;
 import com.qflow.server.entity.Queue;
+import com.qflow.server.entity.exceptions.QueueNotCreatedException;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
 import com.qflow.server.usecase.queues.CreateQueueDatabase;
 import com.qflow.server.usecase.queues.GetQueueDatabase;
@@ -37,11 +38,17 @@ public class QueueService implements GetQueueDatabase, CreateQueueDatabase {
     }
 
     @Override
-    public Queue createQueue(Queue queue, String userToken) {
+    public Queue createQueue(Queue queue, int userId) {
         //TODO add to queueToAdd queue using QueueAdapter
-        QueueDB queueToAdd = null;
-        queueRepository.save(queueToAdd);
+        Optional<QueueDB> queueToAdd = queueRepository.createQueue(queueAdapter.queueToQueueDB(queue), userId);
+
+        if(!queueToAdd.isPresent()){
+            throw new QueueNotCreatedException("Queue with id: " +
+                    queueAdapter.queueToQueueDB(queue).getId() + " not created");
+        }
         //TODO add corresponding data to Users-Queue
-        return null;
+
+
+        return queueAdapter.queueDBToQueue(queueToAdd.get());
     }
 }

@@ -26,8 +26,8 @@ public class BeanConfig {
     }
 
     @Bean
-    public CreateQueue createQueue(@Autowired QueueService queueService){
-        return new CreateQueue(queueService);
+    public CreateQueue createQueue(@Autowired QueueService queueService, @Autowired GetUserByToken getUserByToken){
+        return new CreateQueue(queueService, getUserByToken);
     }
 
     //User

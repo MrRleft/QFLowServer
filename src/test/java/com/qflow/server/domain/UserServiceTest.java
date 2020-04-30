@@ -43,7 +43,8 @@ public class UserServiceTest {
 
     @Test
     void getUserByToken_token_user() {
-        Mockito.when(userRepository.findUserByToken("kilo")).thenReturn(Optional.of(userDBMock));
+        Mockito.when(userRepository.findUserByToken("kilo"))
+                .thenReturn(Optional.of(userDBMock));
 
         User res = userService.getUserByToken("kilo");
 

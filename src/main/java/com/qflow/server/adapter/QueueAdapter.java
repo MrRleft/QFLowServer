@@ -22,6 +22,7 @@ public class QueueAdapter {
                 .withJoinId(queueDB.getJoinId())
                 .withName(queueDB.getName())
                 .withId(queueDB.getId())
+                .withBusinessAssociated(queueDB.getBusinessAssociated())
                 .build();
 
     }
@@ -29,5 +30,21 @@ public class QueueAdapter {
     public Queue queuePostToQueue(QueuePost queuePost) {
         //TODO do this adapter
         return new Queue();
+    }
+
+    public QueueDB queueToQueueDB(Queue queue)
+    {
+        return QueueDB.QueueDBBuilder.aQueueDB()
+                .withBusinessAssociated(queue.getBusinessAssociated())
+                .withCapacity(queue.getCapacity())
+                .withCurrentPos(queue.getCurrentPos())
+                .withDateCreated(queue.getDateCreated())
+                .withDateFinished(queue.getDateFinished())
+                .withDescription(queue.getDescription())
+                .withId(queue.getId())
+                .withIsLocked(queue.getLock())
+                .withJoinId(queue.getJoinId())
+                .withName(queue.getName())
+                .build();
     }
 }
