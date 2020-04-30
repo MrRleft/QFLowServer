@@ -6,6 +6,7 @@ import com.qflow.server.domain.repository.dto.UserDB;
 import com.qflow.server.domain.service.UserService;
 import com.qflow.server.entity.User;
 import com.qflow.server.entity.exceptions.LoginNotSuccesfulException;
+import com.qflow.server.entity.exceptions.UserAlreadyExistsException;
 import com.qflow.server.entity.exceptions.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Optional;
 
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
+
     @Mock
     private UserRepository userRepository;
 
@@ -71,6 +74,38 @@ public class UserServiceTest {
     void loginUser_mailPassIsAdmin_LoginNotSuccessfulException(){
         assertThrows(LoginNotSuccesfulException.class, () ->
                 this.userService.loginUser(true, "vic@vic", "123"));
+    }
+
+    @Test
+    void createUser_userExists_UserNotCreatedException(){
+
+        User userToCreate = User.UserBuilder.anUser()
+                .withEmail("example")
+                .withIsAdmin(true)
+                .build();
+
+        UserDB userDB = new UserDB();
+
+        Mockito.when(userRepository.findUserByEmailAndisAdmin("example", true))
+                .thenReturn(Optional.of(userDB));
+
+        assertThrows(UserAlreadyExistsException.class, () ->
+                this.userService.createUser(userToCreate));
+    }
+
+    @Test
+    void createUser_userNotExists_na(){
+
+
+        User userToCreate = User.UserBuilder.anUser()
+                .withEmail("example")
+                .withIsAdmin(true)
+                .build();
+
+
+        this.userService.createUser(userToCreate);
+
+        Mockito.verify(userRepository).save(Mockito.any());
     }
 
 }

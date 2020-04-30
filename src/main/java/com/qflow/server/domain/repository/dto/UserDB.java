@@ -67,6 +67,17 @@ public class UserDB {
     public UserDB() {
     }
 
+    public UserDB(String token, String email, Boolean isAdmin, String nameLastname, String password,
+                  String profilePicture, String username) {
+        this.token = token;
+        this.email = email;
+        this.isAdmin = isAdmin;
+        this.nameLastname = nameLastname;
+        this.password = password;
+        this.profilePicture = profilePicture;
+        this.username = username;
+    }
+
     public UserDB(Integer id, String token, String email, Boolean isAdmin,
                   String nameLastname, String password,
                   String profilePicture, String username) {
