@@ -2,10 +2,13 @@ package com.qflow.server.domain;
 
 import com.qflow.server.adapter.QueueAdapter;
 import com.qflow.server.domain.repository.QueueRepository;
+import com.qflow.server.domain.repository.QueueUserRepository;
 import com.qflow.server.domain.repository.dto.QueueDB;
+import com.qflow.server.domain.repository.dto.QueueUserDB;
 import com.qflow.server.domain.repository.dto.UserDB;
 import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.entity.Queue;
+import com.qflow.server.entity.QueueUser;
 import com.qflow.server.entity.exceptions.QueueuAlreadyExistsException;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,9 +38,13 @@ public class QueueServiceTest {
 
     private UserDB userDBMock;
 
+    private QueueUserDB queueUserDBMock;
+
+    private QueueUserRepository queueUserRepository;
+
     @BeforeEach
     void setUp() {
-        this.queueService = new QueueService(queueRepository, queueAdapter);
+        this.queueService = new QueueService(queueRepository, queueAdapter, queueUserRepository);
         initializeMocks();
     }
 
@@ -49,6 +56,8 @@ public class QueueServiceTest {
         userDBMock = new UserDB(1, "123", "vic@vic.es", true,
                 "pepe", "123",
                 "kilo.jpg", "splitter");
+        queueUserDBMock = new QueueUserDB(3,1,1,
+                true, true, 0);
     }
 
     @Test
@@ -71,8 +80,9 @@ public class QueueServiceTest {
         Queue queueToCreate = Queue.QueueBuilder.aQueue()
                                 .withJoinId("1133").build();
         QueueDB queueDB = new QueueDB();
+        //QueueUserDB queueUserDB = new QueueUserDB();
         Mockito.when(queueRepository.findQueueByJoinId("1133")).thenReturn(Optional.of(queueDB));
-
+        //Mockito.when(queueUserRepository.save(queueUserDBMock)).thenReturn(Optional.of());
         assertThrows(QueueuAlreadyExistsException.class, () -> this.queueService.createQueue(queueToCreate, 1));
     }
 

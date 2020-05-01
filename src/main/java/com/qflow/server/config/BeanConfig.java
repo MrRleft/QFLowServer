@@ -1,6 +1,7 @@
 package com.qflow.server.config;
 
 import com.qflow.server.adapter.QueueAdapter;
+import com.qflow.server.adapter.QueueUserAdapter;
 import com.qflow.server.adapter.UserAdapter;
 import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.domain.service.UserService;
@@ -39,5 +40,12 @@ public class BeanConfig {
     @Bean
     public UserAdapter userAdapter(){
         return new UserAdapter();
+    }
+
+    //Queue User
+    //Queue
+    @Bean
+    public QueueUserAdapter queueUserAdapter(){
+        return new QueueUserAdapter();
     }
 }
