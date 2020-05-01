@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> loginUser(
+    public ResponseEntity<String> createUser(
             @RequestHeader(value = "isAdmin") final boolean isAdmin,
             @Valid @RequestBody UserPost userPost) {
 
