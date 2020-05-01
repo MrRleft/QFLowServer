@@ -3,6 +3,7 @@ package com.qflow.server.controller;
 import com.qflow.server.adapter.QueueAdapter;
 import com.qflow.server.controller.dto.QueuePost;
 import com.qflow.server.entity.Queue;
+import com.qflow.server.entity.QueueUser;
 import com.qflow.server.usecase.queues.CreateQueue;
 import com.qflow.server.usecase.queues.GetQueue;
 import com.qflow.server.usecase.queues.JoinQueue;
@@ -55,10 +56,10 @@ public class QueuesController {
             @RequestBody @Valid final Integer idQueue,
             @RequestHeader @Valid final String token
     ) {
+        //TODO ver como hacer el id bien
+        //QueueUser qu = new QueueUser();
         return new ResponseEntity<Queue>(
-                this.joinQueue.execute(
-                       idQueue, token
-                ), HttpStatus.CREATED);
+                this.joinQueue.execute(idQueue, token), HttpStatus.CREATED);
     }
 }
 

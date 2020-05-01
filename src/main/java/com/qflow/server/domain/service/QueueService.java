@@ -61,7 +61,8 @@ public class QueueService implements GetQueueDatabase, CreateQueueDatabase, Join
 
     @Override
     public Queue joinQueue(Integer idQueue, Integer idUser) {
-        Optional<QueueDB> queueDBOptional = queueRepository.save(idQueue,idUser);
+        //TODO add queueUser to save()
+        Optional<QueueDB> queueDBOptional = queueUserRepository.save();
         if(!queueDBOptional.isPresent()){
             throw new QueueNotFoundException("Queue with id:  is full");
         }
