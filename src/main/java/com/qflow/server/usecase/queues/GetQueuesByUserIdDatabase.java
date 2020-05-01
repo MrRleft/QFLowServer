@@ -2,6 +2,8 @@ package com.qflow.server.usecase.queues;
 
 import com.qflow.server.entity.Queue;
 
+import java.util.List;
+
 public interface GetQueuesByUserIdDatabase {
-    Queue getQueuesByUserId(String expand, int idUser, boolean locked);
+    List<Queue> getQueuesByUserId(String expand, int idUser, boolean locked);
 }

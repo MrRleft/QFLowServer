@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("qflow/queues")
@@ -35,9 +36,10 @@ public class QueuesController {
         this.queueAdapter = queueAdapter;
     }
 
-
+    //TODO Change mapping?
+    //TODO Receive token and convert to idUser
     @GetMapping("/{idUser}")
-    public ResponseEntity<Queue> getQueuesByUserId(
+    public ResponseEntity<List<Queue>> getQueuesByUserId(
             @PathVariable("idUser") final int idUser,
             @RequestParam(required = false) String expand,
             @RequestParam(required = false) boolean locked) {
@@ -45,9 +47,8 @@ public class QueuesController {
                 this.getQueuesByUserId.execute(expand, idUser, locked), HttpStatus.OK);
     }
 
-
     @GetMapping("/{idQueue}")
-    public ResponseEntity<Queue> getQueue(@PathVariable("idQueue") final int idQueue) {
+    public ResponseEntity<Queue> getQueueByQueueId(@PathVariable("idQueue") final int idQueue) {
         return new ResponseEntity<>(
                 this.getQueueByQueueId.execute(idQueue), HttpStatus.OK);
     }

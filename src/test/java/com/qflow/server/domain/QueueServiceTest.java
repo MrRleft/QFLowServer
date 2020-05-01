@@ -44,12 +44,19 @@ public class QueueServiceTest {
                 Timestamp.from(instant), Timestamp.from(instant));
     }
 
+    /*
+    @Test
+    void getQueueById_userId_queue(){
+        Mockito.when(queueRepository.findById(1)).thenReturn(Optional.of(queueDBMock));
+        Queue res = queueService.getQueueByQueueId(1);
+        assertEquals(res.getName(), "Example");
+    }
+    */
+
     @Test
     void getQueueById_queueId_queue(){
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.of(queueDBMock));
-
         Queue res = queueService.getQueueByQueueId(1);
-
         assertEquals(res.getName(), "Example");
     }
 

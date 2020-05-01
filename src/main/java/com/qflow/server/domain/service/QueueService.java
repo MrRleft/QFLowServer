@@ -12,6 +12,7 @@ import com.qflow.server.usecase.queues.GetQueuesByUserIdDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,18 +30,18 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     }
 
     @Override
-    public Queue getQueuesByUserId(String expand, int idUser, boolean locked) {
+    public List<Queue> getQueuesByUserId(String expand, int idUser, boolean locked) {
 
-        Optional<QueueDB> queueDBOptional;
+        Optional<List<QueueDB>> queueDBListOptional;
         if(expand == "all"){
-            queueDBOptional = queueRepository.getQueuesByUserId(idUser, locked);
+            queueDBListOptional = queueRepository.getQueuesByUserId(idUser, locked);
         }else{
-            queueDBOptional = queueRepository.getAllQueues(locked);
+            queueDBListOptional = queueRepository.getAllQueues(locked);
         }
-        if(!queueDBOptional.isPresent()){
+        if(!queueDBListOptional.isPresent()){
             throw new QueueNotFoundException("Queues not found");
         }
-        return queueAdapter.queueDBToQueue(queueDBOptional.get());
+        return queueAdapter.queueDBListToQueueList(queueDBListOptional.get());
 
     }
 

@@ -1,31 +1,25 @@
 package com.qflow.server.domain.repository;
 
 import com.qflow.server.domain.repository.dto.QueueDB;
-import com.qflow.server.entity.Queue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface QueueRepository extends JpaRepository<QueueDB, Integer> {
-
-
-    //PONER EL SIMPLE DE VICTOR Y RUBEN
-
 
     @Query(value = "SELECT *  FROM queue" +
                         "JOIN queue_user ON queue_user.id_queue_qu_fk = queue.id_queue" +
                         "JOIN users ON queue_user.id_user_qu_fk = :userId" +
                         " AND CASE WHEN :active IS NOT NULL THEN queue.is_locked = :locked ELSE true END",
                      nativeQuery = true)
-    Optional<QueueDB> getQueuesByUserId( Integer userId, Boolean locked );
+    Optional<List<QueueDB>> getQueuesByUserId(Integer userId, Boolean locked );
 
     @Query(value = "SELECT *  FROM queue" +
                     " AND CASE WHEN :locked IS NOT NULL THEN queue.is_locked = :locked ELSE true END",
             nativeQuery = true)
-    Optional<QueueDB> getAllQueues(Boolean locked);
+    Optional<List<QueueDB>> getAllQueues(Boolean locked);
 }
 
 
