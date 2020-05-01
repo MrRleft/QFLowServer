@@ -49,16 +49,15 @@ public class QueuesController {
         return new ResponseEntity<>("Queue created", HttpStatus.OK);
     }
 
-    // TODO
     @PostMapping
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<Queue> joinQueue(
-            @RequestBody @Valid final QueuePost queuePost,
+            @RequestBody @Valid final Integer idQueue,
             @RequestHeader @Valid final String token
     ) {
         return new ResponseEntity<Queue>(
                 this.joinQueue.execute(
-                        this.queueAdapter.queuePostToQueue(queuePost), token
+                       idQueue, token
                 ), HttpStatus.CREATED);
     }
 }
