@@ -6,6 +6,7 @@ import com.qflow.server.domain.service.UserService;
 import com.qflow.server.entity.Queue;
 import com.qflow.server.usecase.queues.CreateQueue;
 import com.qflow.server.usecase.queues.GetQueueByQueueId;
+import com.qflow.server.usecase.queues.GetQueuesByUserId;
 import com.qflow.server.usecase.users.GetUserByToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,9 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,6 +40,9 @@ public class QueueControllerTest {
 
     @MockBean
     private GetUserByToken getUserByToken;
+
+    @MockBean
+    private GetQueuesByUserId getQueuesByUserId;
 
     @MockBean
     private UserService userService;
@@ -67,7 +73,7 @@ public class QueueControllerTest {
 
 
         final ResponseEntity response =
-                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/1", this.port),
+                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdQueue/1", this.port),
                         HttpMethod.GET,
                         new HttpEntity<>(new HttpHeaders()),
                         String.class,
@@ -79,5 +85,39 @@ public class QueueControllerTest {
         assertTrue(((String) response.getBody()).contains("1"));
 
     }
+
+    @Test
+    void getQueue_userId_queue(){
+
+        List<Queue>  queueListMock = new ArrayList<>();
+        Queue queueMock = Queue.QueueBuilder.aQueue().withId(1).build();
+        queueListMock.add(queueMock);
+
+        restTemplate.getRestTemplate().setInterceptors(
+                Collections.singletonList((request, body, execution) -> {
+
+                    request.getHeaders().add("expand", "all");
+                    request.getHeaders().add("locked", "false");
+
+                    return execution.execute(request, body);
+                }));
+
+        Mockito.when(this.getQueuesByUserId.execute("all",1,  false)).thenReturn(queueListMock);
+
+        final ResponseEntity response =
+                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdUser/1", this.port),
+                        HttpMethod.GET,
+                        new HttpEntity<>(new HttpHeaders()),
+                        String.class,
+                        new Object());
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((String) response.getBody()).contains("1"));
+
+    }
+
+
 
 }

@@ -38,16 +38,16 @@ public class QueuesController {
 
     //TODO Change mapping?
     //TODO Receive token and convert to idUser
-    @GetMapping("/{idUser}")
+    @GetMapping("/byIdUser/{idUser}")
     public ResponseEntity<List<Queue>> getQueuesByUserId(
             @PathVariable("idUser") final int idUser,
-            @RequestParam(required = false) String expand,
-            @RequestParam(required = false) boolean locked) {
+            @RequestHeader(required = false) String expand,
+            @RequestHeader(required = false) boolean locked) {
         return new ResponseEntity<>(
                 this.getQueuesByUserId.execute(expand, idUser, locked), HttpStatus.OK);
     }
 
-    @GetMapping("/{idQueue}")
+    @GetMapping("/byIdQueue/{idQueue}")
     public ResponseEntity<Queue> getQueueByQueueId(@PathVariable("idQueue") final int idQueue) {
         return new ResponseEntity<>(
                 this.getQueueByQueueId.execute(idQueue), HttpStatus.OK);

@@ -12,7 +12,7 @@ public interface QueueRepository extends JpaRepository<QueueDB, Integer> {
     @Query(value = "SELECT *  FROM queue" +
                         "JOIN queue_user ON queue_user.id_queue_qu_fk = queue.id_queue" +
                         "JOIN users ON queue_user.id_user_qu_fk = :userId" +
-                        " AND CASE WHEN :active IS NOT NULL THEN queue.is_locked = :locked ELSE true END",
+                        " AND CASE WHEN :locked IS NOT NULL THEN queue.is_locked = :locked ELSE true END",
                      nativeQuery = true)
     Optional<List<QueueDB>> getQueuesByUserId(Integer userId, Boolean locked );
 
