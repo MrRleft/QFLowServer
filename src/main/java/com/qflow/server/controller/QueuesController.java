@@ -36,15 +36,13 @@ public class QueuesController {
         this.queueAdapter = queueAdapter;
     }
 
-    //TODO Change mapping?
-    //TODO Receive token and convert to idUser
-    @GetMapping("/byIdUser/{idUser}")
+    @GetMapping("/byIdUser/{token}")
     public ResponseEntity<List<Queue>> getQueuesByUserId(
-            @PathVariable("idUser") final int idUser,
-            @RequestHeader(required = false) String expand,
-            @RequestHeader(required = false) boolean locked) {
+            @PathVariable("token") final String token,
+            @RequestParam(required = false) String expand,
+            @RequestParam(required = false) boolean locked) {
         return new ResponseEntity<>(
-                this.getQueuesByUserId.execute(expand, idUser, locked), HttpStatus.OK);
+                this.getQueuesByUserId.execute(expand, token, locked), HttpStatus.OK);
     }
 
     @GetMapping("/byIdQueue/{idQueue}")
@@ -65,42 +63,3 @@ public class QueuesController {
                 ), HttpStatus.CREATED);
     }
 }
-
-/*
-@GetMapping(produces = "application/json")
-    public ResponseEntity<EntityModel<?>> getApiList(
-            @RequestParam(value = "_limit", required = false, defaultValue = "9") final int limit,
-            @RequestParam(value = "_offset", required = false, defaultValue = "0") final int offset,
-            @RequestParam(value = "_sort", required = false, defaultValue = "+title") final String sort,
-            @RequestParam(value = "_search", required = false, defaultValue = "") final String search,
-            @RequestParam(value = "_expand", required = false, defaultValue = "") final String expand,
-            @RequestParam(value = "entity", required = false, defaultValue = "-1") final int entityAL,
-            @RequestHeader(value = "x-organization-id", required = false, defaultValue = "") final String organizationIdHeader
-            ) {
-
-        final String organizationConsumerId = "".equals(organizationIdHeader) ? null : organizationIdHeader;
-
-        final String sortFilter = org.owasp.encoder.Encode.forJava(sort);
-        final String searchFilter = org.owasp.encoder.Encode.forJava(search);
-        final String expandFilter = org.owasp.encoder.Encode.forJava(expand);
-
-        // Check Request Params
-        utilsController.checkParamsOfGetApiList(limit, expandFilter, 0, 50, Arrays.asList(ALL, PRODUCTS));
-
-        final List<ApiWithALProductsAndApiSpec> allApiList =
-                this.getApiList.execute(limit, offset, sortFilter, searchFilter,
-                        expandFilter, organizationConsumerId, entityAL);
-
-        // Get total APIs: _count
-        final int totalApis = apiService.getCountApis(searchFilter, organizationConsumerId);
-        final APIList apiList = new APIList(generateApisEmbedded(allApiList, expandFilter), totalApis);
-
-        final EntityModel<?> response = new EntityModel<>(apiList);
-
-        // Hateoas
-        utilsController.generatePaginationLinksHateoas(response, offset, limit, totalApis,
-                utilsController.getCurrentURI());
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
- */

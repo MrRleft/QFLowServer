@@ -93,19 +93,10 @@ public class QueueControllerTest {
         Queue queueMock = Queue.QueueBuilder.aQueue().withId(1).build();
         queueListMock.add(queueMock);
 
-        restTemplate.getRestTemplate().setInterceptors(
-                Collections.singletonList((request, body, execution) -> {
-
-                    request.getHeaders().add("expand", "all");
-                    request.getHeaders().add("locked", "false");
-
-                    return execution.execute(request, body);
-                }));
-
-        Mockito.when(this.getQueuesByUserId.execute("all",1,  false)).thenReturn(queueListMock);
+        Mockito.when(this.getQueuesByUserId.execute("all","1",  false)).thenReturn(queueListMock);
 
         final ResponseEntity response =
-                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdUser/1", this.port),
+                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdUser/1?expand=all&locked=false", this.port),
                         HttpMethod.GET,
                         new HttpEntity<>(new HttpHeaders()),
                         String.class,
@@ -117,7 +108,4 @@ public class QueueControllerTest {
         assertTrue(((String) response.getBody()).contains("1"));
 
     }
-
-
-
 }
