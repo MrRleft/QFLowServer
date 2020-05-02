@@ -27,8 +27,9 @@ public class BeanConfig {
     }
 
     @Bean
-    public GetQueuesByUserId getQueuesByUserId(@Autowired QueueService queueService){
-        return new GetQueuesByUserId(queueService);
+    public GetQueuesByUserId getQueuesByUserId(@Autowired QueueService queueService,
+                                               @Autowired GetUserByToken getUserByToken){
+        return new GetQueuesByUserId(queueService, getUserByToken);
     }
 
     @Bean

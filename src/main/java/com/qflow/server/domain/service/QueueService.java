@@ -32,10 +32,14 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     @Override
     public List<Queue> getQueuesByUserId(String expand, int idUser, boolean locked) {
 
-        Optional<List<QueueDB>> queueDBListOptional;
-        if(expand == "all"){
-            queueDBListOptional = queueRepository.getQueuesByUserId(idUser, locked);
-        }else{
+        Optional<List<QueueDB>> queueDBListOptional = null;
+        if(expand != null)
+        {
+            if(expand.equalsIgnoreCase("all")){
+                queueDBListOptional = queueRepository.getQueuesByUserId(idUser, locked);
+            }
+        }
+        else{
             queueDBListOptional = queueRepository.getAllQueues(locked);
         }
         if(!queueDBListOptional.isPresent()){

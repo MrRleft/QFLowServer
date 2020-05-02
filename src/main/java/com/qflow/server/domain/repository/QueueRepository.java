@@ -3,21 +3,22 @@ package com.qflow.server.domain.repository;
 import com.qflow.server.domain.repository.dto.QueueDB;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface QueueRepository extends JpaRepository<QueueDB, Integer> {
 
-    @Query(value = "SELECT *  FROM queue" +
-                        "JOIN queue_user ON queue_user.id_queue_qu_fk = queue.id_queue" +
-                        "JOIN users ON queue_user.id_user_qu_fk = :userId" +
-                        " AND CASE WHEN :locked IS NOT NULL THEN queue.is_locked = :locked ELSE true END",
+    @Query(value = "SELECT *  FROM queue q JOIN queue_user qu ON\n" +
+            "      q.id = qu.id_queue_qu_fk\n" +
+            "    AND qu.id_user_qu_fk = :userId\n" +
+            "      WHERE CASE WHEN :locked IS NOT NULL THEN q.is_locked = :locked ELSE true END",
                      nativeQuery = true)
     Optional<List<QueueDB>> getQueuesByUserId(Integer userId, Boolean locked );
 
     @Query(value = "SELECT *  FROM queue" +
-                    " AND CASE WHEN :locked IS NOT NULL THEN queue.is_locked = :locked ELSE true END",
+                    " WHERE CASE WHEN :locked IS NOT NULL THEN queue.is_locked = :locked ELSE true END",
             nativeQuery = true)
     Optional<List<QueueDB>> getAllQueues(Boolean locked);
 }
