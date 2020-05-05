@@ -50,16 +50,16 @@ public class QueuesController {
         return new ResponseEntity<>("Queue created", HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/joinQueue/{idQueue}")
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<Queue> joinQueue(
-            @RequestBody @Valid final Integer idQueue,
+    public ResponseEntity<String> joinQueue(
+            @PathVariable("idQueue") final int idQueue,
             @RequestHeader @Valid final String token
     ) {
         //TODO ver como hacer el id bien
         //QueueUser qu = new QueueUser();
-        return new ResponseEntity<Queue>(
-                this.joinQueue.execute(idQueue, token), HttpStatus.CREATED);
+        this.joinQueue.execute(idQueue, token);
+        return new ResponseEntity<>("Queue joined", HttpStatus.OK);
     }
 }
 

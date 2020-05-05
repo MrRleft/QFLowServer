@@ -13,6 +13,12 @@ public interface QueueRepository extends JpaRepository<QueueDB, Integer> {
             "FROM queue\n" +
             "WHERE join_id = :joinId ",
             nativeQuery = true)
-    Optional<QueueDB> findQueueByJoinId(@Param("joinId") String joinId);
+    Optional<QueueDB> findQueueByJoinId(@Param("joinId") int joinId);
 
+
+    @Query(value = "SELECT *\n" +
+            "FROM queue\n" +
+            "WHERE id = :id ",
+            nativeQuery = true)
+    Optional<QueueDB> insertJoinId(@Param("id") int id);
 }

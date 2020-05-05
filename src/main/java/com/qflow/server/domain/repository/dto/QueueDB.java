@@ -23,8 +23,10 @@ public class QueueDB {
             length = 128)
     private String businessAssociated;
 
-    @Column(length = 32)
-    private String joinId;
+    @Column(length = 32, name = "join_id")
+    @SequenceGenerator(name="queue_join_id_seq",sequenceName="queue_join_id_seq")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="queue_join_id_seq")
+    private int joinId;
 
     @Column(length = 32)
     private Integer capacity;
@@ -58,7 +60,7 @@ public class QueueDB {
         return businessAssociated;
     }
 
-    public String getJoinId() {
+    public int getJoinId() {
         return joinId;
     }
 
@@ -86,7 +88,7 @@ public class QueueDB {
                    String name,
                    String description,
                    String businessAssociated,
-                   String joinId,
+                   int joinId,
                    Integer capacity,
                    Integer currentPos,
                    Boolean isLocked,
@@ -113,7 +115,7 @@ public class QueueDB {
         private String name;
         private String description;
         private String businessAssociated;
-        private String joinId;
+        private int joinId;
         private Integer capacity;
         private Integer currentPos;
         private Boolean isLocked;
@@ -147,7 +149,7 @@ public class QueueDB {
             return this;
         }
 
-        public QueueDBBuilder withJoinId(String joinId) {
+        public QueueDBBuilder withJoinId(int joinId) {
             this.joinId = joinId;
             return this;
         }
