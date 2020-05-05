@@ -22,12 +22,40 @@ public class QueueAdapter {
                 .withJoinId(queueDB.getJoinId())
                 .withName(queueDB.getName())
                 .withId(queueDB.getId())
+                .withBusinessAssociated(queueDB.getBusinessAssociated())
                 .build();
 
     }
 
     public Queue queuePostToQueue(QueuePost queuePost) {
-        //TODO do this adapter
-        return new Queue();
+        return Queue.QueueBuilder.aQueue()
+                .withBusinessAssociated(queuePost.getBusinessAssociated())
+                .withCapacity(queuePost.getCapacity())
+                .withCurrentPos(queuePost.getCurrentPos())
+                .withDateCreated(queuePost.getDateCreated())
+                .withDateFinished(queuePost.getDateFinished())
+                .withDescription(queuePost.getDescription())
+                .withId(queuePost.getId())
+                .withIsLock(queuePost.getLock())
+                .withJoinId(queuePost.getJoinId())
+                .withName(queuePost.getName())
+                .build();
+    }
+
+
+    public QueueDB queueToQueueDB(Queue queue)
+    {
+        return QueueDB.QueueDBBuilder.aQueueDB()
+                .withBusinessAssociated(queue.getBusinessAssociated())
+                .withCapacity(queue.getCapacity())
+                .withCurrentPos(queue.getCurrentPos())
+                .withDateCreated(queue.getDateCreated())
+                .withDateFinished(queue.getDateFinished())
+                .withDescription(queue.getDescription())
+                .withId(queue.getId())
+                .withIsLocked(queue.getLock())
+                .withJoinId(queue.getJoinId())
+                .withName(queue.getName())
+                .build();
     }
 }

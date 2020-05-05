@@ -85,6 +85,10 @@ public class QueueControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(((String) response.getBody()).contains("1"));
+    }
+
+    @Test
+    void creatQueue_queueId_queue(){
 
     }
 

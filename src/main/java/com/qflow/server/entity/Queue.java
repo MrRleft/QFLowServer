@@ -16,6 +16,7 @@ public class Queue {
     private int capacity;
     private int currentPos;
     private Boolean isLock;
+    private String businessAssociated;
 
     public Queue() {
     }
@@ -56,6 +57,9 @@ public class Queue {
         return isLock;
     }
 
+    public String getBusinessAssociated() {
+        return businessAssociated;
+    }
     public static final class QueueBuilder {
         private int id;
         private String name;
@@ -66,6 +70,7 @@ public class Queue {
         private int capacity;
         private int currentPos;
         private Boolean isLock;
+        private String businessAssociated;
 
         private QueueBuilder() {
         }
@@ -76,6 +81,12 @@ public class Queue {
 
         public QueueBuilder withId(int id) {
             this.id = id;
+            return this;
+        }
+
+        public QueueBuilder withBusinessAssociated(String businessAssociated)
+        {
+            this.businessAssociated = businessAssociated;
             return this;
         }
 
@@ -130,6 +141,7 @@ public class Queue {
             queue.isLock = this.isLock;
             queue.joinId = this.joinId;
             queue.currentPos = this.currentPos;
+            queue.businessAssociated = this.businessAssociated;
             return queue;
         }
     }
