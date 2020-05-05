@@ -1,9 +1,13 @@
 package com.qflow.server.domain.service;
 
 import com.qflow.server.adapter.QueueAdapter;
+import com.qflow.server.adapter.QueueUserAdapter;
 import com.qflow.server.domain.repository.QueueRepository;
+import com.qflow.server.domain.repository.QueueUserRepository;
 import com.qflow.server.domain.repository.dto.QueueDB;
+import com.qflow.server.domain.repository.dto.QueueUserDB;
 import com.qflow.server.entity.Queue;
+import com.qflow.server.entity.exceptions.QueueuAlreadyExistsException;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
 import com.qflow.server.usecase.queues.CreateQueueDatabase;
 import com.qflow.server.usecase.queues.GetQueueDatabase;
@@ -18,12 +22,16 @@ public class QueueService implements GetQueueDatabase, CreateQueueDatabase {
 
     final private QueueRepository queueRepository;
     final private QueueAdapter queueAdapter;
+    final private QueueUserRepository queueUserRepository;
+    //final private QueueUserAdapter queueUserAdapter;
 
     public QueueService(
             @Autowired final QueueRepository queueRepository,
-            @Autowired final QueueAdapter queueAdapter) {
+            @Autowired final QueueAdapter queueAdapter,
+            @Autowired final QueueUserRepository queueUserRepository) {
         this.queueRepository = queueRepository;
         this.queueAdapter = queueAdapter;
+        this.queueUserRepository = queueUserRepository;
     }
 
     @Override
@@ -37,11 +45,18 @@ public class QueueService implements GetQueueDatabase, CreateQueueDatabase {
     }
 
     @Override
-    public Queue createQueue(Queue queue, String userToken) {
-        //TODO add to queueToAdd queue using QueueAdapter
-        QueueDB queueToAdd = null;
-        queueRepository.save(queueToAdd);
-        //TODO add corresponding data to Users-Queue
-        return null;
+    public void createQueue(Queue queue, int userId) {
+        if(!queueRepository.findQueueByJoinId(queue.getJoinId()).isPresent()){
+            queueRepository.save(queueAdapter.queueToQueueDB(queue));
+            //TODO check the id of queue_user
+            /*
+            QueueUserDB qu = new QueueUserDB(0,queue.getId(), userId);
+            queueUserRepository.save(qu);
+            */
+        }else{
+            throw new QueueuAlreadyExistsException("Queue with join Id: " + queue.getJoinId() + " already exists");
+        }
     }
+
+
 }

@@ -36,15 +36,23 @@ public class QueuesController {
                 this.getQueue.execute(idQueue), HttpStatus.OK);
     }
 
-    @PostMapping
-    @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<Queue> postQueue(
+    @PostMapping("/")
+    public ResponseEntity<String> postQueue(
             @RequestBody @Valid final QueuePost queuePost,
-            @RequestHeader @Valid final String token
+            @RequestHeader (value = "token") final String token
     ) {
-        return new ResponseEntity<Queue>(
-                this.createQueue.execute(
-                        this.queueAdapter.queuePostToQueue(queuePost), token
-                ), HttpStatus.CREATED);
+        createQueue.execute(queueAdapter.queuePostToQueue(queuePost), token);
+        return new ResponseEntity<>("Queue created", HttpStatus.OK);
     }
 }
+
+/*
+@PostMapping("/")
+public ResponseEntity<String> loginUser(
+        @RequestHeader(value = "isAdmin") final boolean isAdmin,
+        @Valid @RequestBody UserPost userPost) {
+    User userToCreate = userAdapter.userPostToUser(userPost, isAdmin);
+    createUser.execute(userToCreate);
+    return new ResponseEntity<>("User created", HttpStatus.OK);
+}
+* */
