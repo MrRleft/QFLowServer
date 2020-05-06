@@ -61,13 +61,22 @@ public class QueueUserDB {
     public QueueUserDB() {
     }
 
-    public QueueUserDB(Integer id, Integer idQueue, Integer idUser){
-        this.id = id;
+    public QueueUserDB(Integer idQueue, Integer idUser){
+        this.id = null;
         this.idQueue = idQueue;
         this.idUser = idUser;
         this.isActive = true;
         this.isAdmin = true;
         this.position = 0;
+    }
+
+    public QueueUserDB(Integer idQueue, Integer idUser, Integer pos){
+        this.id = null;
+        this.idQueue = idQueue;
+        this.idUser = idUser;
+        this.isActive = true;
+        this.isAdmin = false;
+        this.position = pos;
     }
 
     public static final class QueueUserDBBuilder {

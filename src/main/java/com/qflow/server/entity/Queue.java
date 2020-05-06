@@ -10,7 +10,7 @@ public class Queue {
     private int id;
     private String name;
     private String description;
-    private String joinId;
+    private int joinId;
     private Timestamp dateCreated;
     private Timestamp dateFinished;
     private int capacity;
@@ -33,7 +33,7 @@ public class Queue {
         return description;
     }
 
-    public String getJoinId() {
+    public int getJoinId() {
         return joinId;
     }
 
@@ -60,11 +60,16 @@ public class Queue {
     public String getBusinessAssociated() {
         return businessAssociated;
     }
+
+    public void setJoinId(Integer rnd) {
+        this.joinId = rnd;
+    }
+
     public static final class QueueBuilder {
         private int id;
         private String name;
         private String description;
-        private String joinId;
+        private int joinId;
         private Timestamp dateCreated;
         private Timestamp dateFinished;
         private int capacity;
@@ -100,7 +105,7 @@ public class Queue {
             return this;
         }
 
-        public QueueBuilder withJoinId(String joinId) {
+        public QueueBuilder withJoinId(int joinId) {
             this.joinId = joinId;
             return this;
         }

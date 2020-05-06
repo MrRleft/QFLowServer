@@ -9,7 +9,7 @@ public class QueuePost {
     private int id;
     private String name;
     private String description;
-    private String joinId;
+    private int joinId;
     private Timestamp dateCreated;
     private Timestamp dateFinished;
     private int capacity;
@@ -21,7 +21,7 @@ public class QueuePost {
         private int id;
         private String name;
         private String description;
-        private String joinId;
+        private int joinId;
         private Timestamp dateCreated;
         private Timestamp dateFinished;
         private int capacity;
@@ -51,7 +51,7 @@ public class QueuePost {
             return this;
         }
 
-        public QueuePostBuilder withJoinId(String joinId) {
+        public QueuePostBuilder withJoinId(int joinId) {
             this.joinId = joinId;
             return this;
         }
@@ -115,7 +115,7 @@ public class QueuePost {
         return description;
     }
 
-    public String getJoinId() {
+    public int getJoinId() {
         return joinId;
     }
 
@@ -142,6 +142,5 @@ public class QueuePost {
     public String getBusinessAssociated() {
         return businessAssociated;
     }
-
 
 }

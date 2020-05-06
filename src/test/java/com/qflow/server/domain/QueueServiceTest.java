@@ -51,7 +51,7 @@ public class QueueServiceTest {
     private void initializeMocks() {
         Instant instant = Instant.now();
         queueDBMock = new QueueDB(3, "Example", "desc",
-                "buss", "idJ", 2,1,false,
+                "buss", 1, 2,1,false,
                 Timestamp.from(instant), Timestamp.from(instant));
         userDBMock = new UserDB(1, "123", "vic@vic.es", true,
                 "pepe", "123",
@@ -78,10 +78,10 @@ public class QueueServiceTest {
     @Test
     void createQueue_queueAlreadyExists_queue() {
         Queue queueToCreate = Queue.QueueBuilder.aQueue()
-                                .withJoinId("1133").build();
+                                .withJoinId(1133).build();
         QueueDB queueDB = new QueueDB();
         //QueueUserDB queueUserDB = new QueueUserDB();
-        Mockito.when(queueRepository.findQueueByJoinId("1133")).thenReturn(Optional.of(queueDB));
+        Mockito.when(queueRepository.findQueueByJoinId(1133)).thenReturn(Optional.of(queueDB));
         //Mockito.when(queueUserRepository.save(queueUserDBMock)).thenReturn(Optional.of());
         assertThrows(QueueuAlreadyExistsException.class, () -> this.queueService.createQueue(queueToCreate, 1));
     }
@@ -89,7 +89,7 @@ public class QueueServiceTest {
     @Test
     void createQueue_queue(){
         Queue queueToCreate = Queue.QueueBuilder.aQueue()
-                .withJoinId("1133").build();
+                .withJoinId(1133).build();
 
         this.queueService.createQueue(queueToCreate, 1);
         Mockito.verify(queueRepository).save(Mockito.any());
