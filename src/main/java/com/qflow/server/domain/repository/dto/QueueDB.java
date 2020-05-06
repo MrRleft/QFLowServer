@@ -1,5 +1,7 @@
 package com.qflow.server.domain.repository.dto;
 
+import com.qflow.server.entity.Queue;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -19,10 +21,12 @@ public class QueueDB {
 
     @Column(name = "business_associated",
             length = 128)
-    private String businessAssocitated;
+    private String businessAssociated;
 
-    @Column(length = 32)
-    private String joinId;
+    @Column(length = 32, name = "join_id")
+    @SequenceGenerator(name="queue_join_id_seq",sequenceName="queue_join_id_seq")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="queue_join_id_seq")
+    private int joinId;
 
     @Column(length = 32)
     private Integer capacity;
@@ -52,11 +56,11 @@ public class QueueDB {
         return description;
     }
 
-    public String getBusinessAssocitated() {
-        return businessAssocitated;
+    public String getBusinessAssociated() {
+        return businessAssociated;
     }
 
-    public String getJoinId() {
+    public int getJoinId() {
         return joinId;
     }
 
@@ -83,8 +87,8 @@ public class QueueDB {
     public QueueDB(Integer id,
                    String name,
                    String description,
-                   String businessAssocitated,
-                   String joinId,
+                   String businessAssociated,
+                   int joinId,
                    Integer capacity,
                    Integer currentPos,
                    Boolean isLocked,
@@ -93,7 +97,7 @@ public class QueueDB {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.businessAssocitated = businessAssocitated;
+        this.businessAssociated = businessAssociated;
         this.joinId = joinId;
         this.capacity = capacity;
         this.currentPos = currentPos;
@@ -103,5 +107,91 @@ public class QueueDB {
     }
 
     public QueueDB() {
+    }
+
+
+    public static final class QueueDBBuilder {
+        private Integer id;
+        private String name;
+        private String description;
+        private String businessAssociated;
+        private int joinId;
+        private Integer capacity;
+        private Integer currentPos;
+        private Boolean isLocked;
+        private Timestamp dateCreated;
+        private Timestamp dateFinished;
+
+        private QueueDBBuilder() {
+        }
+
+        public static QueueDBBuilder aQueueDB() {
+            return new QueueDBBuilder();
+        }
+
+        public QueueDBBuilder withId(Integer id) {
+            this.id = id;
+            return this;
+        }
+
+        public QueueDBBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public QueueDBBuilder withDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public QueueDBBuilder withBusinessAssociated(String businessAssociated) {
+            this.businessAssociated = businessAssociated;
+            return this;
+        }
+
+        public QueueDBBuilder withJoinId(int joinId) {
+            this.joinId = joinId;
+            return this;
+        }
+
+        public QueueDBBuilder withCapacity(Integer capacity) {
+            this.capacity = capacity;
+            return this;
+        }
+
+        public QueueDBBuilder withCurrentPos(Integer currentPos) {
+            this.currentPos = currentPos;
+            return this;
+        }
+
+        public QueueDBBuilder withIsLocked(Boolean isLocked) {
+            this.isLocked = isLocked;
+            return this;
+        }
+
+        public QueueDBBuilder withDateCreated(Timestamp dateCreated) {
+            this.dateCreated = dateCreated;
+            return this;
+        }
+
+        public QueueDBBuilder withDateFinished(Timestamp dateFinished) {
+            this.dateFinished = dateFinished;
+            return this;
+        }
+
+        public QueueDB build() {
+            QueueDB queueDB = new QueueDB();
+            queueDB.name = this.name;
+            queueDB.capacity = this.capacity;
+            queueDB.id = this.id;
+            queueDB.description = this.description;
+            queueDB.dateCreated = this.dateCreated;
+            queueDB.dateFinished = this.dateFinished;
+            queueDB.isLocked = this.isLocked;
+            queueDB.joinId = this.joinId;
+            queueDB.currentPos = this.currentPos;
+            queueDB.businessAssociated = this.businessAssociated;
+            return queueDB;
+        }
     }
 }

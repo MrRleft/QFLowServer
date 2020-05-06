@@ -1,12 +1,14 @@
 package com.qflow.server.config;
 
 import com.qflow.server.adapter.QueueAdapter;
+import com.qflow.server.adapter.QueueUserAdapter;
 import com.qflow.server.adapter.UserAdapter;
 import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.domain.service.UserService;
 import com.qflow.server.usecase.queues.CreateQueue;
 import com.qflow.server.usecase.queues.GetQueue;
 import com.qflow.server.usecase.users.CreateUser;
+import com.qflow.server.usecase.queues.JoinQueue;
 import com.qflow.server.usecase.users.GetUserByToken;
 import com.qflow.server.usecase.users.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +30,13 @@ public class BeanConfig {
     }
 
     @Bean
-    public CreateQueue createQueue(@Autowired QueueService queueService){
-        return new CreateQueue(queueService);
+    public CreateQueue createQueue(@Autowired QueueService queueService, @Autowired GetUserByToken getUserByToken){
+        return new CreateQueue(queueService, getUserByToken);
+    }
+
+    @Bean
+    public JoinQueue joinQueue(@Autowired QueueService queueService, @Autowired GetUserByToken userService){
+        return new JoinQueue(queueService, userService);
     }
 
     //User
@@ -51,5 +58,12 @@ public class BeanConfig {
     @Bean
     public UserAdapter userAdapter(){
         return new UserAdapter();
+    }
+
+    //Queue User
+    //Queue
+    @Bean
+    public QueueUserAdapter queueUserAdapter(){
+        return new QueueUserAdapter();
     }
 }
