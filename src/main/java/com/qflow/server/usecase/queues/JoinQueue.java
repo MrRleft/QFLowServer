@@ -10,7 +10,7 @@ public class JoinQueue {
 
     private final JoinQueueDatabase joinQueueDatabase;
     private final GetUserByToken getUserByToken;
-    public JoinQueue(JoinQueueDatabase joinQueueDatabase,
+    public JoinQueue(@Autowired JoinQueueDatabase joinQueueDatabase,
                      @Autowired GetUserByToken getUserByTokenDatabase) {
         this.joinQueueDatabase = joinQueueDatabase;
         this.getUserByToken = getUserByTokenDatabase;

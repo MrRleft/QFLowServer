@@ -51,10 +51,9 @@ public class QueueService implements GetQueueDatabase, CreateQueueDatabase, Join
     @Override
     public void createQueue(Queue queue, int userId) {
             Random r = new Random();
-            Integer rnd = r.nextInt(99999);
-            while(queueRepository.findQueueByJoinId(rnd).isPresent())
-            {
-                rnd = r.nextInt();
+            int rnd = r.nextInt(99999);
+            while(queueRepository.findQueueByJoinId(rnd).isPresent()) {
+                rnd = r.nextInt(99999);
             }
             queue.setJoinId(rnd);
             QueueDB aux = queueRepository.save(queueAdapter.queueToQueueDB(queue));
@@ -71,14 +70,10 @@ public class QueueService implements GetQueueDatabase, CreateQueueDatabase, Join
         if(!queueUser.isPresent()) {
             Integer pos = queueUserRepository.getLastPosition(idQueue);
             QueueUserDB queueUserDB = new QueueUserDB(idQueue, idUser, pos + 1);
-            QueueUserDB queueUserDBInput = queueUserRepository.save(queueUserDB);
+            queueUserRepository.save(queueUserDB);
         }
         else{
             throw new UserAlreadyInQueue("User already in queue");
         }
-        /*
-        if(!(queueUserDBInput == null)){
-            throw new QueueNotFoundException("Queue with id:  is full");
-        }*/
     }
 }

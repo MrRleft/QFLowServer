@@ -61,6 +61,7 @@ public class QueueUserDB {
     public QueueUserDB() {
     }
 
+    //Constructor for CreateQueue
     public QueueUserDB(Integer idQueue, Integer idUser){
         this.id = null;
         this.idQueue = idQueue;
@@ -70,6 +71,7 @@ public class QueueUserDB {
         this.position = 0;
     }
 
+    //Constructor for JoinQueue
     public QueueUserDB(Integer idQueue, Integer idUser, Integer pos){
         this.id = null;
         this.idQueue = idQueue;
