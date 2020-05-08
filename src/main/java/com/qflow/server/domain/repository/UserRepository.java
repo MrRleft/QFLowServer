@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserDB, Integer> {
-    @Query(value = "SELECT *\n" +
-            "FROM users\n" +
+    @Query(value = "SELECT * " +
+            "FROM users " +
             "WHERE token = :token",
          nativeQuery = true)
     Optional<UserDB> findUserByToken(@Param("token") String token);
 
-    @Query(value = "SELECT *\n" +
-            "FROM users\n" +
+    @Query(value = "SELECT * " +
+            "FROM users " +
             "WHERE email = :email " +
             "AND password = :password " +
             "AND is_admin = :isAdmin",
@@ -25,8 +25,8 @@ public interface UserRepository extends JpaRepository<UserDB, Integer> {
                                     @Param("password") String password,
                                     @Param("isAdmin") boolean isAdmin);
 
-    @Query(value = "SELECT *\n" +
-            "FROM users\n" +
+    @Query(value = "SELECT * " +
+            "FROM users " +
             "WHERE email = :email " +
             "AND is_admin = :isAdmin",
             nativeQuery = true)

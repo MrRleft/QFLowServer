@@ -10,14 +10,14 @@ import java.util.Optional;
 
 public interface QueueUserRepository extends JpaRepository<QueueUserDB, Integer> {
 
-    @Query(value = "SELECT MAX(position ) \n" +
-            "FROM queue_user\n" +
+    @Query(value = "SELECT MAX(position )  " +
+            "FROM queue_user " +
             "WHERE id_queue_qu_fk = :id_queue_qu_fk ",
             nativeQuery = true)
     Integer getLastPosition(@Param("id_queue_qu_fk") int id_queue_qu_fk);
 
-    @Query(value = "SELECT *\n" +
-            "FROM queue_user\n" +
+    @Query(value = "SELECT * " +
+            "FROM queue_user " +
             "WHERE id_user_qu_fk = :id_user_qu_fk" +
             " AND id_queue_qu_fk = :id_queue_qu_fk ",
             nativeQuery = true)
