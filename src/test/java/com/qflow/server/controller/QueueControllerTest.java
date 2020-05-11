@@ -7,7 +7,9 @@ import com.qflow.server.entity.Queue;
 import com.qflow.server.usecase.queues.CreateQueue;
 import com.qflow.server.usecase.queues.GetQueueByQueueId;
 import com.qflow.server.usecase.queues.GetQueuesByUserId;
+import com.qflow.server.usecase.users.CreateUser;
 import com.qflow.server.usecase.users.GetUserByToken;
+import com.qflow.server.usecase.users.LoginUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -43,6 +45,10 @@ public class QueueControllerTest {
 
     @MockBean
     private GetQueuesByUserId getQueuesByUserId;
+
+    @MockBean
+    private CreateUser createUser;
+
 
     @MockBean
     private UserService userService;
@@ -96,7 +102,7 @@ public class QueueControllerTest {
         Mockito.when(this.getQueuesByUserId.execute("all","1",  false)).thenReturn(queueListMock);
 
         final ResponseEntity response =
-                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdUser/1?expand=all&locked=false", this.port),
+                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/1", this.port),
                         HttpMethod.GET,
                         new HttpEntity<>(new HttpHeaders()),
                         String.class,
@@ -106,6 +112,11 @@ public class QueueControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(((String) response.getBody()).contains("1"));
+    }
+
+    @Test
+    void creatQueue_queueId_queue(){
 
     }
+
 }

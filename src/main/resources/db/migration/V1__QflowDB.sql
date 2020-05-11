@@ -3,7 +3,7 @@ create table queue
     id                  serial not null
         constraint queue_pk
             primary key,
-    join_id             varchar(255),
+    join_id             integer,
     name                varchar(255),
     description         varchar(255),
     business_associated varchar(255),
@@ -14,12 +14,9 @@ create table queue
     is_locked           boolean
 );
 
-alter table queue
-    owner to postgres;
 
 create unique index queue_join_id_uindex
     on queue (join_id);
-
 create table active_period
 (
     id                serial not null
@@ -32,8 +29,6 @@ create table active_period
             references queue
 );
 
-alter table active_period
-    owner to postgres;
 
 create table rate_queue
 (
@@ -44,8 +39,6 @@ create table rate_queue
     comment varchar(255)
 );
 
-alter table rate_queue
-    owner to postgres;
 
 create table users
 (
@@ -61,12 +54,9 @@ create table users
     username        varchar(255)
 );
 
-alter table users
-    owner to postgres;
 
 create unique index users_token_uindex
     on users (token);
-
 create table info_user_queue
 (
     id              serial not null
@@ -86,12 +76,9 @@ create table info_user_queue
     unattended      boolean
 );
 
-alter table info_user_queue
-    owner to postgres;
 
 create unique index info_user_queue_id_uindex
     on info_user_queue (id);
-
 create table queue_user
 (
     id             serial not null
@@ -108,12 +95,7 @@ create table queue_user
     position       integer
 );
 
-alter table queue_user
-    owner to postgres;
-
 create unique index queue_user_id_uindex
     on queue_user (id);
-
 create unique index queue_user_position_uindex
     on queue_user (position);
-
