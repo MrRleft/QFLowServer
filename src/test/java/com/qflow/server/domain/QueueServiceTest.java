@@ -1,6 +1,7 @@
 package com.qflow.server.domain;
 
 import com.qflow.server.adapter.QueueAdapter;
+import com.qflow.server.domain.repository.InfoUserQueueRepository;
 import com.qflow.server.domain.repository.QueueRepository;
 import com.qflow.server.domain.repository.QueueUserRepository;
 import com.qflow.server.domain.repository.dto.QueueDB;
@@ -46,9 +47,11 @@ public class QueueServiceTest {
 
     private QueueUserRepository queueUserRepository;
 
+    private InfoUserQueueRepository infoUserQueueRepository;
+
     @BeforeEach
     void setUp() {
-        this.queueService = new QueueService(queueRepository, queueAdapter, queueUserRepository);
+        this.queueService = new QueueService(queueRepository, queueAdapter, queueUserRepository, infoUserQueueRepository);
         initializeMocks();
     }
 

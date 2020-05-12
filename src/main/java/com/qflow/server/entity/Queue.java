@@ -65,6 +65,14 @@ public class Queue {
         this.joinId = rnd;
     }
 
+    public void setDateCreated(Timestamp timestamp) {
+        this.dateCreated = timestamp;
+    }
+
+    public void setIsLocked(boolean b) {
+        this.isLock = b;
+    }
+
     public static final class QueueBuilder {
         private int id;
         private String name;

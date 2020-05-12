@@ -2,8 +2,10 @@ package com.qflow.server.domain.service;
 
 import com.qflow.server.adapter.QueueAdapter;
 import com.qflow.server.adapter.QueueUserAdapter;
+import com.qflow.server.domain.repository.InfoUserQueueRepository;
 import com.qflow.server.domain.repository.QueueRepository;
 import com.qflow.server.domain.repository.QueueUserRepository;
+import com.qflow.server.domain.repository.dto.InfoUserQueueDB;
 import com.qflow.server.domain.repository.dto.QueueDB;
 import com.qflow.server.domain.repository.dto.QueueUserDB;
 import com.qflow.server.entity.Queue;
@@ -18,6 +20,8 @@ import com.qflow.server.usecase.queues.JoinQueueDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -29,15 +33,18 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     final private QueueRepository queueRepository;
     final private QueueAdapter queueAdapter;
     final private QueueUserRepository queueUserRepository;
+    final private InfoUserQueueRepository infoUserQueueRepository;
     //final private QueueUserAdapter queueUserAdapter;
 
     public QueueService(
             @Autowired final QueueRepository queueRepository,
             @Autowired final QueueAdapter queueAdapter,
-            @Autowired final QueueUserRepository queueUserRepository) {
+            @Autowired final QueueUserRepository queueUserRepository,
+            @Autowired final InfoUserQueueRepository infoUserQueueRepository) {
         this.queueRepository = queueRepository;
         this.queueAdapter = queueAdapter;
         this.queueUserRepository = queueUserRepository;
+        this.infoUserQueueRepository = infoUserQueueRepository;
     }
 
     @Override
@@ -77,13 +84,14 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     public void createQueue(Queue queue, int userId) {
             Random r = new Random();
             Integer rnd = r.nextInt(99999);
-            while(queueRepository.findQueueByJoinId(rnd).isPresent())
-            {
+            while(queueRepository.findQueueByJoinId(rnd).isPresent()) {
                 rnd = r.nextInt();
             }
             queue.setJoinId(rnd);
+            Timestamp timestamp = new Timestamp(new Date().getTime());
+            queue.setDateCreated(timestamp);
+            queue.setIsLocked(true);
             QueueDB aux = queueRepository.save(queueAdapter.queueToQueueDB(queue));
-            //Consulta para obtener id de la cola recien creada
 
             //TODO check the id of queue_user
             QueueUserDB qu = new QueueUserDB(aux.getId(), userId);
@@ -94,18 +102,17 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     @Override
     public void joinQueue(Integer idQueue, Integer idUser) {
         Optional<QueueUserDB> queueUser = queueUserRepository.getUserInQueue(idUser, idQueue);
-        if(!queueUser.isPresent()) {
+        Optional<QueueUserDB> infoUserQueue = infoUserQueueRepository.getUserInInfoUserQueue(idUser, idQueue);
+        if(!queueUser.isPresent() && !infoUserQueue.isPresent()) {
             Integer pos = queueUserRepository.getLastPosition(idQueue);
             QueueUserDB queueUserDB = new QueueUserDB(idQueue, idUser, pos + 1);
             QueueUserDB queueUserDBInput = queueUserRepository.save(queueUserDB);
+            InfoUserQueueDB infoUserQueueDB = new InfoUserQueueDB(idQueue, idUser);
+            infoUserQueueRepository.save(infoUserQueueDB);
         }
-        else{
+        else {
             throw new UserAlreadyInQueue("User already in queue");
         }
-
-        //if(!(queueUserDBInput == null)){
-          //  throw new QueueNotFoundException("Queue with id:  is full");
-        //}
     }
 
 }
