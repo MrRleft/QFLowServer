@@ -18,7 +18,7 @@ public class GetQueuesByUserId {
         this.getUserByToken = getUserByToken;
     }
 
-    public List<Queue> execute(String expand, String token, boolean locked){
+    public List<Queue> execute(String expand, String token, Boolean locked){
 
         User userReturned = getUserByToken.execute(token);
 

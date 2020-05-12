@@ -14,9 +14,10 @@ public interface QueueRepository extends JpaRepository<QueueDB, Integer> {
     @Query(value = "SELECT *  FROM queue q JOIN queue_user qu ON\n" +
             "      q.id = qu.id_queue_qu_fk\n" +
             "    AND qu.id_user_qu_fk = :userId\n" +
-            "      WHERE CASE WHEN :locked IS NOT NULL THEN q.is_locked = :locked ELSE true END",
+            "      WHERE  q.is_locked = :locked",
                      nativeQuery = true)
-    Optional<List<QueueDB>> getQueuesByUserId(Integer userId, Boolean locked );
+    Optional<List<QueueDB>> getQueuesByUserIdLocked(Integer userId, Boolean locked );
+
     @Query(value = "SELECT * " +
             "FROM queue" +
             " WHERE join_id = :joinId ",
@@ -24,9 +25,19 @@ public interface QueueRepository extends JpaRepository<QueueDB, Integer> {
     Optional<QueueDB> findQueueByJoinId(@Param("joinId") int joinId);
 
     @Query(value = "SELECT *  FROM queue" +
-                    " WHERE CASE WHEN :locked IS NOT NULL THEN queue.is_locked = :locked ELSE true END",
+                    " WHERE queue.is_locked = :locked",
             nativeQuery = true)
-    Optional<List<QueueDB>> getAllQueues(Boolean locked);
+    Optional<List<QueueDB>> getQueuesByLocked(Boolean locked);
+
+    @Query(value = "SELECT *  FROM queue",
+            nativeQuery = true)
+    Optional<List<QueueDB>> getAllQueues();
+
+    @Query(value = "SELECT *  FROM queue q JOIN queue_user qu ON\n" +
+            "      q.id = qu.id_queue_qu_fk\n" +
+            "    AND qu.id_user_qu_fk = :userId\n",
+            nativeQuery = true)
+    Optional<List<QueueDB>> getAllQueuesByUserId(Integer userId); //expand as userall
 
     @Query(value = "SELECT *" +
             " FROM queue " +

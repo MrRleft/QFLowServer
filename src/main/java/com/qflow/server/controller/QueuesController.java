@@ -44,7 +44,7 @@ public class QueuesController {
     public ResponseEntity<List<Queue>> getQueuesByUserId(
             @PathVariable("token") final String token,
             @RequestParam(required = false) String expand,
-            @RequestParam(required = false) boolean locked) {
+            @RequestParam(required = false) Boolean locked) {
         return new ResponseEntity<>(
                 this.getQueuesByUserId.execute(expand, token, locked), HttpStatus.OK);
     }

@@ -41,27 +41,29 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     }
 
     @Override
-    public List<Queue> getQueuesByUserId(String expand, int idUser, boolean locked) {
+    public List<Queue> getQueuesByUserId(String expand, int idUser, Boolean locked) {
 
         Optional<List<QueueDB>> queueDBListOptional = null;
-        if(expand != null)
-        {
-            if(expand.equals("all")){   //Showing all queues with locked as true or false
-                queueDBListOptional = queueRepository.getAllQueues(locked);
-            }else{  //Fetching queues that the user's in with locked as true or false
-                queueDBListOptional = queueRepository.getQueuesByUserId(idUser, locked);
+        if(expand != null) {
+            if(expand.equals("all")) {
+                if (locked == null) {   //Showing all queues with locked as true or false
+                    queueDBListOptional = queueRepository.getAllQueues();
+                } else{  //Fetching all queues by locked status
+                    queueDBListOptional = queueRepository.getQueuesByLocked(locked);
+                }
+            }else if(expand.equalsIgnoreCase("alluser")){
+                queueDBListOptional = queueRepository.getAllQueuesByUserId(idUser);
+            }else{
+                throw new QueueNotFoundException("expand value not identified");
             }
         }else{  //Fetching queues that the user's in with locked as true or false (expand can be null)
-            queueDBListOptional = queueRepository.getQueuesByUserId(idUser, locked);
+            queueDBListOptional = queueRepository.getQueuesByUserIdLocked(idUser, locked);
         }
-
-
 
         if(!queueDBListOptional.isPresent()){
             throw new QueueNotFoundException("Queues not found");
         }
         return queueAdapter.queueDBListToQueueList(queueDBListOptional.get());
-
     }
 
     @Override

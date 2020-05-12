@@ -102,7 +102,7 @@ public class QueueControllerTest {
         Mockito.when(this.getQueuesByUserId.execute("all","1",  false)).thenReturn(queueListMock);
 
         final ResponseEntity response =
-                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/1", this.port),
+                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdUser/1?expand=all&locked=false", this.port),
                         HttpMethod.GET,
                         new HttpEntity<>(new HttpHeaders()),
                         String.class,
