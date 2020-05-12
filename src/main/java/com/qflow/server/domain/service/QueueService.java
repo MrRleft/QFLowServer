@@ -14,8 +14,6 @@ import com.qflow.server.entity.exceptions.UserAlreadyInQueue;
 import com.qflow.server.usecase.queues.CreateQueueDatabase;
 import com.qflow.server.usecase.queues.GetQueueByQueueIdDatabase;
 import com.qflow.server.usecase.queues.GetQueuesByUserIdDatabase;
-
-import com.qflow.server.usecase.queues.GetQueueDatabase;
 import com.qflow.server.usecase.queues.JoinQueueDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,7 @@ import java.util.Optional;
 import java.util.Random;
 
 @Service
-public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueIdDatabase, CreateQueueDatabase {
+public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueIdDatabase, CreateQueueDatabase, JoinQueueDatabase {
 
 
     final private QueueRepository queueRepository;
@@ -48,13 +46,17 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         Optional<List<QueueDB>> queueDBListOptional = null;
         if(expand != null)
         {
-            if(expand.equalsIgnoreCase("all")){
+            if(expand.equals("all")){   //Showing all queues with locked as true or false
+                queueDBListOptional = queueRepository.getAllQueues(locked);
+            }else{  //Fetching queues that the user's in with locked as true or false
                 queueDBListOptional = queueRepository.getQueuesByUserId(idUser, locked);
             }
+        }else{  //Fetching queues that the user's in with locked as true or false (expand can be null)
+            queueDBListOptional = queueRepository.getQueuesByUserId(idUser, locked);
         }
-        else{
-            queueDBListOptional = queueRepository.getAllQueues(locked);
-        }
+
+
+
         if(!queueDBListOptional.isPresent()){
             throw new QueueNotFoundException("Queues not found");
         }
@@ -88,6 +90,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
             queueUserRepository.save(qu);
     }
 
+
     @Override
     public void joinQueue(Integer idQueue, Integer idUser) {
         Optional<QueueUserDB> queueUser = queueUserRepository.getUserInQueue(idUser, idQueue);
@@ -99,10 +102,10 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         else{
             throw new UserAlreadyInQueue("User already in queue");
         }
-        /*
-        if(!(queueUserDBInput == null)){
-            throw new QueueNotFoundException("Queue with id:  is full");
-        }*/
+
+        //if(!(queueUserDBInput == null)){
+          //  throw new QueueNotFoundException("Queue with id:  is full");
+        //}
     }
 
 }

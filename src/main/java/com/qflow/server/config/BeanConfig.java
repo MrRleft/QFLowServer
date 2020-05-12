@@ -41,6 +41,7 @@ public class BeanConfig {
         return new CreateQueue(queueService, getUserByToken);
     }
 
+
     @Bean
     public JoinQueue joinQueue(@Autowired QueueService queueService, @Autowired GetUserByToken userService){
         return new JoinQueue(queueService, userService);
