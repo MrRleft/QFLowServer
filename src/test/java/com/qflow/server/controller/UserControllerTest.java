@@ -8,7 +8,8 @@ import com.qflow.server.domain.service.UserService;
 import com.qflow.server.entity.User;
 import com.qflow.server.entity.exceptions.LoginNotSuccesfulException;
 import com.qflow.server.usecase.queues.CreateQueue;
-import com.qflow.server.usecase.queues.GetQueue;
+import com.qflow.server.usecase.queues.GetQueuesByUserId;
+
 import com.qflow.server.usecase.users.CreateUser;
 import com.qflow.server.usecase.users.GetUserByToken;
 import com.qflow.server.usecase.users.LoginUser;
@@ -44,7 +45,7 @@ public class UserControllerTest {
     private UserService userService;
 
     @MockBean
-    private GetQueue getQueue;
+    private GetQueuesByUserId getQueuesByUserId;
 
     @MockBean
     private LoginUser loginUser;

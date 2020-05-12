@@ -5,6 +5,8 @@ import com.qflow.server.domain.repository.dto.QueueDB;
 import com.qflow.server.entity.Queue;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 public class QueueAdapter {
 
@@ -57,5 +59,15 @@ public class QueueAdapter {
                 .withJoinId(queue.getJoinId())
                 .withName(queue.getName())
                 .build();
+    }
+
+    public List<Queue> queueDBListToQueueList(List<QueueDB> queueDBList) {
+        List<Queue> queueList = new ArrayList<>();
+
+        for(QueueDB queueDB : queueDBList){
+            queueList.add(this.queueDBToQueue(queueDB));
+        }
+
+        return queueList;
     }
 }

@@ -20,6 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +37,8 @@ public class QueueServiceTest {
     private QueueService queueService;
 
     private QueueDB queueDBMock;
+
+    private List<QueueDB> queueDBListMock;
 
     private UserDB userDBMock;
 
@@ -53,6 +57,19 @@ public class QueueServiceTest {
         queueDBMock = new QueueDB(3, "Example", "desc",
                 "buss", 1, 2,1,false,
                 Timestamp.from(instant), Timestamp.from(instant));
+
+        queueDBListMock = new ArrayList<>();
+        queueDBListMock.add(queueDBMock);
+    }
+
+
+    @Test
+    void getQueueById_userId_queue_ALL(){
+        Mockito.when(queueRepository.getQueuesByUserId(1, false)).thenReturn(Optional.of(queueDBListMock));
+
+        List<Queue> res = queueService.getQueuesByUserId("all", 1, false);
+
+        assertEquals(res.get(0).getName(), "Example");
         userDBMock = new UserDB(1, "123", "vic@vic.es", true,
                 "pepe", "123",
                 "kilo.jpg", "splitter");
@@ -61,18 +78,32 @@ public class QueueServiceTest {
     }
 
     @Test
+    void getQueueById_userId_queue_NOTALL(){
+        Mockito.when(queueRepository.getAllQueues(false)).thenReturn(Optional.of(queueDBListMock));
+
+        List<Queue> res = queueService.getQueuesByUserId(null, 1, false);
+
+        assertEquals(res.get(0).getName(), "Example");
+    }
+
+    @Test
+    void getQueueById_userQueuesNotFound_Exception(){
+        Mockito.when(queueRepository.getQueuesByUserId(1, false)).thenReturn(Optional.empty());
+        assertThrows(QueueNotFoundException.class, () -> this.queueService.getQueuesByUserId("all", 1, false));
+    }
+
+
+    @Test
     void getQueueById_queueId_queue(){
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.of(queueDBMock));
-
-        Queue res = queueService.getQueue(1);
-
+        Queue res = queueService.getQueueByQueueId(1);
         assertEquals(res.getName(), "Example");
     }
 
     @Test
     void getQueueById_queueIdNotExists_Exception(){
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.empty());
-        assertThrows(QueueNotFoundException.class, () -> this.queueService.getQueue(1));
+        assertThrows(QueueNotFoundException.class, () -> this.queueService.getQueueByQueueId(1));
     }
 
     @Test
