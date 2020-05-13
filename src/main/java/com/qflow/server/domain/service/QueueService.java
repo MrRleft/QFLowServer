@@ -10,6 +10,7 @@ import com.qflow.server.domain.repository.dto.QueueDB;
 import com.qflow.server.domain.repository.dto.QueueUserDB;
 import com.qflow.server.entity.Queue;
 import com.qflow.server.entity.QueueUser;
+import com.qflow.server.entity.exceptions.QueueFullException;
 import com.qflow.server.entity.exceptions.QueueuAlreadyExistsException;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
 import com.qflow.server.entity.exceptions.UserAlreadyInQueue;
@@ -103,15 +104,21 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     public void joinQueue(Integer idQueue, Integer idUser) {
         Optional<QueueUserDB> queueUser = queueUserRepository.getUserInQueue(idUser, idQueue);
         Optional<QueueUserDB> infoUserQueue = infoUserQueueRepository.getUserInInfoUserQueue(idUser, idQueue);
-        if(!queueUser.isPresent() && !infoUserQueue.isPresent()) {
-            Integer pos = queueUserRepository.getLastPosition(idQueue);
-            QueueUserDB queueUserDB = new QueueUserDB(idQueue, idUser, pos + 1);
-            QueueUserDB queueUserDBInput = queueUserRepository.save(queueUserDB);
-            InfoUserQueueDB infoUserQueueDB = new InfoUserQueueDB(idQueue, idUser);
-            infoUserQueueRepository.save(infoUserQueueDB);
+        Integer capacity = queueRepository.getCapacity(idQueue);
+        Integer numQueues = queueUserRepository.numActiveQueues(idQueue);
+        if(capacity > numQueues) {
+            if (!queueUser.isPresent() && !infoUserQueue.isPresent()) {
+                Integer pos = queueUserRepository.getLastPosition(idQueue);
+                QueueUserDB queueUserDB = new QueueUserDB(idQueue, idUser, pos + 1);
+                QueueUserDB queueUserDBInput = queueUserRepository.save(queueUserDB);
+                InfoUserQueueDB infoUserQueueDB = new InfoUserQueueDB(idQueue, idUser);
+                infoUserQueueRepository.save(infoUserQueueDB);
+            } else {
+                throw new UserAlreadyInQueue("User already in queue");
+            }
         }
         else {
-            throw new UserAlreadyInQueue("User already in queue");
+            throw new QueueFullException("Queue full");
         }
     }
 
