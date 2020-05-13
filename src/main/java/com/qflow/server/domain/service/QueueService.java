@@ -94,6 +94,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
             Timestamp timestamp = new Timestamp(new Date().getTime());
             queue.setDateCreated(timestamp);
             queue.setIsLocked(true);
+            queue.setCurrentPos(1);
             QueueDB aux = queueRepository.save(queueAdapter.queueToQueueDB(queue));
 
             //TODO check the id of queue_user

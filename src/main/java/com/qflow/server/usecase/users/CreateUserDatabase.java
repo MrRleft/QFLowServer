@@ -4,6 +4,6 @@ import com.qflow.server.entity.User;
 
 public interface CreateUserDatabase {
 
-    void createUser(User user);
+    User createUser(User user);
 
 }

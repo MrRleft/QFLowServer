@@ -73,6 +73,10 @@ public class Queue {
         this.isLock = b;
     }
 
+    public void setCurrentPos(int i) {
+        this.currentPos = i;
+    }
+
     public static final class QueueBuilder {
         private int id;
         private String name;

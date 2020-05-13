@@ -33,13 +33,7 @@ public class QueueAdapter {
         return Queue.QueueBuilder.aQueue()
                 .withBusinessAssociated(queuePost.getBusinessAssociated())
                 .withCapacity(queuePost.getCapacity())
-                .withCurrentPos(queuePost.getCurrentPos())
-                .withDateCreated(queuePost.getDateCreated())
-                .withDateFinished(queuePost.getDateFinished())
                 .withDescription(queuePost.getDescription())
-                .withId(queuePost.getId())
-                .withIsLock(queuePost.getLock())
-                .withJoinId(queuePost.getJoinId())
                 .withName(queuePost.getName())
                 .build();
     }
