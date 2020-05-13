@@ -23,4 +23,11 @@ public interface QueueUserRepository extends JpaRepository<QueueUserDB, Integer>
             nativeQuery = true)
     Optional<QueueUserDB> getUserInQueue(@Param("id_user_qu_fk") int id_user_qu_fk,
                               @Param("id_queue_qu_fk") int id_queue_qu_fk);
+
+    @Query(value = "SELECT COUNT(id_queue_qu_fk) " +
+            "FROM queue_user " +
+            "WHERE is_active = true" +
+            " AND id_queue_qu_fk = :id_queue_qu_fk ",
+            nativeQuery = true)
+    Integer numActiveQueues(@Param("id_queue_qu_fk") int id_queue_qu_fk);
 }

@@ -65,9 +65,9 @@ public class UserServiceTest {
         Mockito.when(userRepository.findUserByEmailAndPassword("vic@vic.es", "123", true))
                 .thenReturn(Optional.of(userDBMock));
 
-        String res = userService.loginUser(true, "vic@vic.es", "123");
+        User res = userService.loginUser(true, "vic@vic.es", "123");
 
-        assertEquals("kilo", res);
+        assertEquals("kilo", res.getToken());
     }
 
     @Test
@@ -102,6 +102,8 @@ public class UserServiceTest {
                 .withIsAdmin(true)
                 .build();
 
+
+        Mockito.when(this.userRepository.save(Mockito.any())).thenReturn(this.userDBMock);
 
         this.userService.createUser(userToCreate);
 

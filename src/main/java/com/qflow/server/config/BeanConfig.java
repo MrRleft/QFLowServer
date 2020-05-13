@@ -6,7 +6,8 @@ import com.qflow.server.adapter.UserAdapter;
 import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.domain.service.UserService;
 import com.qflow.server.usecase.queues.CreateQueue;
-import com.qflow.server.usecase.queues.GetQueue;
+import com.qflow.server.usecase.queues.GetQueueByQueueId;
+import com.qflow.server.usecase.queues.GetQueuesByUserId;
 import com.qflow.server.usecase.users.CreateUser;
 import com.qflow.server.usecase.queues.JoinQueue;
 import com.qflow.server.usecase.users.GetUserByToken;
@@ -25,14 +26,21 @@ public class BeanConfig {
     }
 
     @Bean
-    public GetQueue getQueue(@Autowired QueueService queueService){
-        return new GetQueue(queueService);
+    public GetQueueByQueueId getQueueByQueueId(@Autowired QueueService queueService){
+        return new GetQueueByQueueId(queueService);
+    }
+
+    @Bean
+    public GetQueuesByUserId getQueuesByUserId(@Autowired QueueService queueService,
+                                               @Autowired GetUserByToken getUserByToken){
+        return new GetQueuesByUserId(queueService, getUserByToken);
     }
 
     @Bean
     public CreateQueue createQueue(@Autowired QueueService queueService, @Autowired GetUserByToken getUserByToken){
         return new CreateQueue(queueService, getUserByToken);
     }
+
 
     @Bean
     public JoinQueue joinQueue(@Autowired QueueService queueService, @Autowired GetUserByToken userService){

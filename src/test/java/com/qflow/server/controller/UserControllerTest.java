@@ -8,7 +8,8 @@ import com.qflow.server.domain.service.UserService;
 import com.qflow.server.entity.User;
 import com.qflow.server.entity.exceptions.LoginNotSuccesfulException;
 import com.qflow.server.usecase.queues.CreateQueue;
-import com.qflow.server.usecase.queues.GetQueue;
+import com.qflow.server.usecase.queues.GetQueuesByUserId;
+
 import com.qflow.server.usecase.users.CreateUser;
 import com.qflow.server.usecase.users.GetUserByToken;
 import com.qflow.server.usecase.users.LoginUser;
@@ -44,7 +45,7 @@ public class UserControllerTest {
     private UserService userService;
 
     @MockBean
-    private GetQueue getQueue;
+    private GetQueuesByUserId getQueuesByUserId;
 
     @MockBean
     private LoginUser loginUser;
@@ -68,6 +69,7 @@ public class UserControllerTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+    private User mockUser;
 
     @BeforeEach
     void setUp(){
@@ -77,6 +79,15 @@ public class UserControllerTest {
                             .add("isAdmin", "true");
                     return execution.execute(request, body);
                 }));
+
+        this.mockUser = User.UserBuilder.anUser().withEmail("prueba@Pororeo")
+                .withIsAdmin(false)
+                .withNameLastname("left")
+                .withPassword("123")
+                .withToken("token")
+                .withUsername("auiofhjasduio")
+                .withId(1)
+                .withProfilePicture("ime").build();
     }
 
     @Test
@@ -114,7 +125,7 @@ public class UserControllerTest {
                 }));
 
         Mockito.when(this.loginUser.execute(true, "Example@com", "123"))
-                .thenReturn("token");
+                .thenReturn(this.mockUser);
 
 
         final ResponseEntity response =
@@ -144,7 +155,7 @@ public class UserControllerTest {
                 }));
 
         Mockito.when(this.loginUser.execute(true, "Example@com", "123"))
-                .thenReturn("token");
+                .thenReturn(this.mockUser);
 
 
         final ResponseEntity response =
@@ -172,7 +183,7 @@ public class UserControllerTest {
                 }));
 
         Mockito.when(this.loginUser.execute(true, "Example@com", "123"))
-                .thenReturn("token");
+                .thenReturn(this.mockUser);
 
 
         final ResponseEntity response =
@@ -210,7 +221,7 @@ public class UserControllerTest {
                         new Object());
 
         assertNotNull(response);
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
@@ -219,6 +230,9 @@ public class UserControllerTest {
         UserPost userPost = UserPost.UserPostBuilder.anUserPost()
                 .withUserName("name")
                 .build();
+
+        Mockito.when(this.createUser.execute(Mockito.any()))
+                .thenReturn(this.mockUser);
 
         final ResponseEntity response =
                 this.restTemplate.exchange(String.format("http://localhost:%d/qflow/user/", this.port),
