@@ -10,8 +10,8 @@ public class CreateUser {
         this.createUserDatabase = createUserDatabase;
     }
 
-    public void execute(User user){
-        this.createUserDatabase.createUser(user);
+    public User execute(User user){
+        return this.createUserDatabase.createUser(user);
     }
 
 }

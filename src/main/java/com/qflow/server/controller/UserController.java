@@ -1,6 +1,7 @@
 package com.qflow.server.controller;
 
 import com.qflow.server.adapter.UserAdapter;
+import com.qflow.server.controller.dto.UserDTO;
 import com.qflow.server.controller.dto.UserPost;
 import com.qflow.server.entity.User;
 import com.qflow.server.entity.exceptions.LoginNotSuccesfulException;
@@ -41,7 +42,7 @@ public class UserController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<String> loginUser(
+    public ResponseEntity<UserDTO> loginUser(
             @RequestHeader(value = "isAdmin") final boolean isAdmin,
             @RequestHeader(value = "mail") String mail,
             @RequestHeader(value = "password") String password) {
@@ -49,24 +50,19 @@ public class UserController {
         mail = org.owasp.encoder.Encode.forJava(mail);
         password = org.owasp.encoder.Encode.forJava(password);
 
-        try {
-            return new ResponseEntity<>(
-                    this.loginUser.execute(isAdmin, mail, password), HttpStatus.OK);
-        } catch (LoginNotSuccesfulException loginNotSuccesfulException) {
-            return new ResponseEntity<>("Login was not successful", HttpStatus.NO_CONTENT);
-        }
+        return new ResponseEntity<>(
+                userAdapter.userToUserDTO(this.loginUser.execute(isAdmin, mail, password)), HttpStatus.OK);
+
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> createUser(
+    public ResponseEntity<UserDTO> createUser(
             @RequestHeader(value = "isAdmin") final boolean isAdmin,
             @Valid @RequestBody UserPost userPost) {
 
         User userToCreate = userAdapter.userPostToUser(userPost, isAdmin);
 
-        createUser.execute(userToCreate);
-
-        return new ResponseEntity<>("User created", HttpStatus.OK);
+        return new ResponseEntity<>(userAdapter.userToUserDTO(createUser.execute(userToCreate)), HttpStatus.OK);
 
     }
 

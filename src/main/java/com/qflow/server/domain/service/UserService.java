@@ -38,23 +38,24 @@ public class UserService implements GetUserByTokenDatabase, LoginUserDatabase, C
     }
 
     @Override
-    public String loginUser(boolean isAdmin, String mail, String password) throws LoginNotSuccesfulException{
+    public User loginUser(boolean isAdmin, String mail, String password) throws LoginNotSuccesfulException{
 
         Optional<UserDB> user = userRepository.findUserByEmailAndPassword(mail, password, isAdmin);
         if(!user.isPresent()){
             throw new LoginNotSuccesfulException("Login not successful");
         }
-        return user.get().getToken();
+        return userAdapter.userDBToUser(user.get());
     }
 
     @Override
-    public void createUser(User user) {
+    public User createUser(User user) throws UserAlreadyExistsException{
 
         if(!userRepository.findUserByEmailAndisAdmin(user.getEmail(), user.getIsAdmin()).isPresent()) {
             String token = generateToken();
             UserDB userToCreate = new UserDB(token, user.getEmail(), user.getIsAdmin(), user.getNameLastname(),
                     user.getPassword(), "", user.getUsername());
-            userRepository.save(userToCreate);
+            userToCreate = userRepository.save(userToCreate);
+            return userAdapter.userDBToUser(userToCreate);
         }
         else{
             throw new UserAlreadyExistsException("User with email: " + user.getEmail() + " with admin situation as " +

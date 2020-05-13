@@ -1,5 +1,6 @@
 package com.qflow.server.usecase.users;
 
+import com.qflow.server.entity.User;
 import com.qflow.server.entity.exceptions.LoginNotSuccesfulException;
 
 public class LoginUser {
@@ -10,7 +11,7 @@ public class LoginUser {
         this.loginUserDatabase = loginUserDatabase;
     }
 
-    public String execute(boolean isAdmin, String mail, String password) throws LoginNotSuccesfulException {
+    public User execute(boolean isAdmin, String mail, String password) throws LoginNotSuccesfulException {
 
         return loginUserDatabase.loginUser(isAdmin, mail, password);
 
