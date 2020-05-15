@@ -104,7 +104,8 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
 
 
     @Override
-    public void joinQueue(Integer idQueue, Integer idUser) {
+    public void joinQueue(Integer joinCode, Integer idUser) {
+        Integer idQueue = queueRepository.getIdQueueByJoinId(joinCode);
         Optional<QueueUserDB> queueUser = queueUserRepository.getUserInQueue(idUser, idQueue);
         Optional<QueueUserDB> infoUserQueue = infoUserQueueRepository.getUserInInfoUserQueue(idUser, idQueue);
         Integer capacity = queueRepository.getCapacity(idQueue);
