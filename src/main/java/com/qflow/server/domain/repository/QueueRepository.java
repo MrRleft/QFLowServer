@@ -50,4 +50,10 @@ public interface QueueRepository extends JpaRepository<QueueDB, Integer> {
             " WHERE id = :id ",
             nativeQuery = true)
     Integer getCapacity(@Param("id") int id);
+
+    @Query(value = "SELECT id " +
+            "FROM queue" +
+            " WHERE join_id = :join_id ",
+            nativeQuery = true)
+    Integer getIdQueueByJoinId(@Param("join_id") int join_id);
 }
