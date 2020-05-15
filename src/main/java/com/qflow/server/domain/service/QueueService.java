@@ -104,10 +104,10 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
 
 
     @Override
-    public void joinQueue(Integer joinCode, Integer idUser) {
+    public Integer joinQueue(Integer joinCode, Integer idUser) {
         Integer idQueue = queueRepository.getIdQueueByJoinId(joinCode);
         Optional<QueueUserDB> queueUser = queueUserRepository.getUserInQueue(idUser, idQueue);
-        Optional<QueueUserDB> infoUserQueue = infoUserQueueRepository.getUserInInfoUserQueue(idUser, idQueue);
+        Optional<InfoUserQueueDB> infoUserQueue = infoUserQueueRepository.getUserInInfoUserQueue(idUser, idQueue);
         Integer capacity = queueRepository.getCapacity(idQueue);
         Integer numQueues = queueUserRepository.numActiveQueues(idQueue);
         if(capacity > numQueues) {
@@ -117,6 +117,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
                 QueueUserDB queueUserDBInput = queueUserRepository.save(queueUserDB);
                 InfoUserQueueDB infoUserQueueDB = new InfoUserQueueDB(idQueue, idUser);
                 infoUserQueueRepository.save(infoUserQueueDB);
+                return idQueue;
             } else {
                 throw new UserAlreadyInQueue("User already in queue");
             }
