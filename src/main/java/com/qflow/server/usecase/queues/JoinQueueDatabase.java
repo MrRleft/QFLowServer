@@ -4,5 +4,5 @@ import com.qflow.server.entity.Queue;
 
 public interface JoinQueueDatabase {
 
-    void joinQueue(Integer joinCode, Integer idUser);
+    Integer joinQueue(Integer joinCode, Integer idUser);
 }

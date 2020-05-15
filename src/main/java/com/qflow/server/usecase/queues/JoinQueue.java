@@ -16,8 +16,8 @@ public class JoinQueue {
         this.getUserByToken = getUserByTokenDatabase;
     }
 
-    public void execute(Integer joinCode, String userToken){
+    public Integer execute(Integer joinCode, String userToken){
         User userByToken = getUserByToken.execute(userToken);
-        joinQueueDatabase.joinQueue(joinCode, userByToken.getId());
+        return joinQueueDatabase.joinQueue(joinCode, userByToken.getId());
     }
 }
