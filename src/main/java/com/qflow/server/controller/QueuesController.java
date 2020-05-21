@@ -42,7 +42,7 @@ public class QueuesController {
 
     @GetMapping("/byIdUser/{token}")
     public ResponseEntity<List<Queue>> getQueuesByUserId(
-            @PathVariable("token") final String token,
+            @RequestHeader(value = "token") final String token,
             @RequestParam(required = false) String expand,
             @RequestParam(required = false) Boolean locked) {
         return new ResponseEntity<>(
