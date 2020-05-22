@@ -40,7 +40,7 @@ public class QueuesController {
         this.queueAdapter = queueAdapter;
     }
 
-    @GetMapping("/byIdUser/{token}")
+    @GetMapping("/byIdUser")
     public ResponseEntity<List<Queue>> getQueuesByUserId(
             @RequestHeader(value = "token") final String token,
             @RequestParam(required = false) String expand,

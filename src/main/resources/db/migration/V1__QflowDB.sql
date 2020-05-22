@@ -99,3 +99,18 @@ create unique index queue_user_id_uindex
     on queue_user (id);
 create unique index queue_user_position_uindex
     on queue_user (position);
+
+
+create table user_device
+(
+    id        serial not null
+        constraint user_device_pk
+            primary key,
+    id_user   integer
+        constraint user_device_user_id_fk
+            references users,
+    id_device integer
+);
+
+create unique index user_device_id_device_uindex
+    on user_device (id_device);
