@@ -66,7 +66,7 @@ public class QueueServiceTest {
         queueDBListMock.add(queueDBMock);
 
         QueueDB queueDBMockFinished1 = new QueueDB(2, "ExampleFinished1", "desc",
-                "buss", 1, 2,1,false,
+                "buss", 2, 2,1,false,
                 Timestamp.from(instant), Timestamp.from(instant));
 
         queueDBFinishedListMock = new ArrayList<>();
@@ -74,7 +74,7 @@ public class QueueServiceTest {
 
     }
 
-    //----------------------------- ByIdUser----------------------------------------------------------------
+    //----------------------------- GetQueuesByIdUser----------------------------------------------------------------
 
     @Test
     void getQueueById_userId_queue_AllQueues(){
@@ -110,7 +110,28 @@ public class QueueServiceTest {
         assertThrows(QueueNotFoundException.class, () -> this.queueService.getQueuesByUserId("all", 1, null));
     }
 
-    //-----------------------------------------------------------------------------------------------------
+    //------------------------------- GetQueueByJoinId----------------------------------------------------------------------
+
+    @Test
+    void getQueueById_joinId_queue(){
+        Mockito.when(queueRepository.getIdQueueByJoinId(1)).thenReturn(1);
+        Mockito.when(queueRepository.findById(1)).thenReturn(Optional.of(queueDBMock));
+
+        Queue res = queueService.getQueueByJoinId(1);
+
+        assertEquals(res.getName(), "ExampleNotFinished");
+    }
+
+    @Test
+    void getQueueById_joinId_exception(){
+        Mockito.when(queueRepository.getIdQueueByJoinId(1)).thenReturn(null);
+
+        assertThrows(QueueNotFoundException.class, () -> this.queueService.getQueueByJoinId(1));
+    }
+
+
+
+    //-------------------------------- GetQueueByQueueId---------------------------------------------------------------------------
 
     @Test
     void getQueueById_queueId_queue(){
