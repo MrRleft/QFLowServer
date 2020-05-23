@@ -14,10 +14,7 @@ import com.qflow.server.entity.exceptions.QueueFullException;
 import com.qflow.server.entity.exceptions.QueueuAlreadyExistsException;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
 import com.qflow.server.entity.exceptions.UserAlreadyInQueue;
-import com.qflow.server.usecase.queues.CreateQueueDatabase;
-import com.qflow.server.usecase.queues.GetQueueByQueueIdDatabase;
-import com.qflow.server.usecase.queues.GetQueuesByUserIdDatabase;
-import com.qflow.server.usecase.queues.JoinQueueDatabase;
+import com.qflow.server.usecase.queues.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +25,7 @@ import java.util.Optional;
 import java.util.Random;
 
 @Service
-public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueIdDatabase, CreateQueueDatabase, JoinQueueDatabase {
+public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueIdDatabase, GetQueueByJoinIdDatabase, CreateQueueDatabase, JoinQueueDatabase {
 
 
     final private QueueRepository queueRepository;
@@ -79,6 +76,20 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         }
         return queueAdapter.queueDBToQueue(queueDBOptional.get());
     }
+
+    @Override
+    public Queue getQueueByJoinId(int joinId) {
+        Optional<QueueDB> queueDBOptional = null;
+        Integer idQueue =  queueRepository.getIdQueueByJoinId(joinId);
+
+        if(idQueue == null)
+            throw new QueueNotFoundException("Queue with id: " + idQueue + " not found");
+        else
+            queueDBOptional = queueRepository.findById(idQueue);
+
+        return queueAdapter.queueDBToQueue(queueDBOptional.get());
+    }
+
 
     @Override
     public void createQueue(Queue queue, int userId) {

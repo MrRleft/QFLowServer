@@ -5,6 +5,7 @@ import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.domain.service.UserService;
 import com.qflow.server.entity.Queue;
 import com.qflow.server.usecase.queues.CreateQueue;
+import com.qflow.server.usecase.queues.GetQueueByJoinId;
 import com.qflow.server.usecase.queues.GetQueueByQueueId;
 import com.qflow.server.usecase.queues.GetQueuesByUserId;
 import com.qflow.server.usecase.users.CreateUser;
@@ -33,6 +34,9 @@ public class QueueControllerTest {
 
     @MockBean
     private GetQueueByQueueId getQueueByQueueId;
+
+    @MockBean
+    private GetQueueByJoinId getQueueByJoinId;
 
     @MockBean
     private CreateQueue createQueue;
@@ -148,6 +152,50 @@ public class QueueControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(((String) response.getBody()).contains("1"));
+    }
+
+    @Test
+    void getQueue_joinId_correct(){
+
+        Queue queueMock = Queue.QueueBuilder.aQueue().withId(1).build();
+
+        Mockito.when(this.getQueueByJoinId.execute(1)).thenReturn(queueMock);
+
+
+        final ResponseEntity response =
+                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdJoin/1", this.port),
+                        HttpMethod.GET,
+                        new HttpEntity<>(new HttpHeaders()),
+                        String.class,
+                        new Object());
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((String) response.getBody()).contains("1"));
+
+    }
+
+    @Test
+    void getQueue_joinId_noQueue(){
+
+        Queue queueMock = Queue.QueueBuilder.aQueue().withId(1).build();
+
+        Mockito.when(this.getQueueByJoinId.execute(1)).thenReturn(queueMock);
+
+
+        final ResponseEntity response =
+                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdJoin/1", this.port),
+                        HttpMethod.GET,
+                        new HttpEntity<>(new HttpHeaders()),
+                        String.class,
+                        new Object());
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((String) response.getBody()).contains("1"));
+
     }
 
     @Test
