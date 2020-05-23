@@ -44,9 +44,9 @@ public class QueuesController {
     public ResponseEntity<List<Queue>> getQueuesByUserId(
             @RequestHeader(value = "token") final String token,
             @RequestParam(required = false) String expand,
-            @RequestParam(required = false) Boolean locked) {
+            @RequestParam(required = false) Boolean finished) {
         return new ResponseEntity<>(
-                this.getQueuesByUserId.execute(expand, token, locked), HttpStatus.OK);
+                this.getQueuesByUserId.execute(expand, token, finished), HttpStatus.OK);
     }
 
     @GetMapping("/byIdQueue/{idQueue}")

@@ -93,7 +93,7 @@ public class QueueControllerTest {
     }
 
     @Test
-    void getQueue_userId_queue(){
+    void getQueue_userId_FinishedQueues(){
 
         TestRestTemplate restTemplate = new TestRestTemplate();
         restTemplate.getRestTemplate().setInterceptors(
@@ -106,10 +106,39 @@ public class QueueControllerTest {
         Queue queueMock = Queue.QueueBuilder.aQueue().withId(1).build();
         queueListMock.add(queueMock);
 
-        Mockito.when(this.getQueuesByUserId.execute("all","1",  false)).thenReturn(queueListMock);
+        Mockito.when(this.getQueuesByUserId.execute(null,"1",  true)).thenReturn(queueListMock);
 
         final ResponseEntity response =
-                restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdUser?expand=all&locked=false", this.port),
+                restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdUser?finished=true", this.port),
+                        HttpMethod.GET,
+                        new HttpEntity<>(new HttpHeaders()),
+                        String.class,
+                        new Object());
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((String) response.getBody()).contains("1"));
+    }
+
+    @Test
+    void getQueue_userId_AllQueuesFromUser(){
+
+        TestRestTemplate restTemplate = new TestRestTemplate();
+        restTemplate.getRestTemplate().setInterceptors(
+                Collections.singletonList((request, body, execution) -> {
+                    request.getHeaders().add("token", "1");
+                    return execution.execute(request, body);
+                }));
+
+        List<Queue>  queueListMock = new ArrayList<>();
+        Queue queueMock = Queue.QueueBuilder.aQueue().withId(1).build();
+        queueListMock.add(queueMock);
+
+        Mockito.when(this.getQueuesByUserId.execute("alluser","1",  null)).thenReturn(queueListMock);
+
+        final ResponseEntity response =
+                restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdUser?expand=alluser", this.port),
                         HttpMethod.GET,
                         new HttpEntity<>(new HttpHeaders()),
                         String.class,

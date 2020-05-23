@@ -18,10 +18,10 @@ public class GetQueuesByUserId {
         this.getUserByToken = getUserByToken;
     }
 
-    public List<Queue> execute(String expand, String token, Boolean locked){
+    public List<Queue> execute(String expand, String token, Boolean finished){
 
         User userReturned = getUserByToken.execute(token);
 
-        return getQueuesByUserIdDatabase.getQueuesByUserId(expand , userReturned.getId(), locked);
+        return getQueuesByUserIdDatabase.getQueuesByUserId(expand , userReturned.getId(), finished);
     }
 }

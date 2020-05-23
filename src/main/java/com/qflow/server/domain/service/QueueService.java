@@ -49,24 +49,21 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     }
 
     @Override
-    public List<Queue> getQueuesByUserId(String expand, int idUser, Boolean locked) {
-
+    public List<Queue> getQueuesByUserId(String expand, int idUser, Boolean finished) {
         Optional<List<QueueDB>> queueDBListOptional = null;
-        if(expand != null) {
-            if(expand.equals("all")) {
-                if (locked == null) {   //Showing all queues with locked as true or false
-                    queueDBListOptional = queueRepository.getAllQueues();
-                } else{  //Fetching all queues by locked status
-                    queueDBListOptional = queueRepository.getQueuesByLocked(locked);
-                }
-            }else if(expand.equalsIgnoreCase("alluser")){
+
+        if(finished == null){    //Me da igual que hayan acabado o no -> AllFromUser, allQueues
+            if(expand.equalsIgnoreCase("alluser"))   //All queues from the user
                 queueDBListOptional = queueRepository.getAllQueuesByUserId(idUser);
-            }else{
+            else if(expand.equalsIgnoreCase("all"))
+                queueDBListOptional = queueRepository.getAllQueues();
+            else
                 throw new QueueNotFoundException("expand value not identified");
-            }
-        }else{  //Fetching queues that the user's in with locked as true or false (expand can be null)
-            queueDBListOptional = queueRepository.getQueuesByUserIdLocked(idUser, locked);
-        }
+        }else if(finished)
+            queueDBListOptional = queueRepository.getQueuesByUserIdFinished(idUser);
+        else
+            queueDBListOptional = queueRepository.getQueuesByUserIdNotFinished(idUser);
+
 
         if(!queueDBListOptional.isPresent()){
             throw new QueueNotFoundException("Queues not found");
@@ -128,3 +125,12 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     }
 
 }
+
+
+/*if(expand.equals("all")) {
+                if (locked == null) {   //All queues from DB
+                    queueDBListOptional = queueRepository.getAllQueues();
+                } else{     //All queues from DB by locked status
+                    queueDBListOptional = queueRepository.getQueuesByLocked(locked);
+                }
+            }else */
