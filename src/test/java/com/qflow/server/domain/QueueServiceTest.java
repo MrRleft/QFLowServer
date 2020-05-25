@@ -4,14 +4,18 @@ import com.qflow.server.adapter.QueueAdapter;
 import com.qflow.server.domain.repository.InfoUserQueueRepository;
 import com.qflow.server.domain.repository.QueueRepository;
 import com.qflow.server.domain.repository.QueueUserRepository;
+import com.qflow.server.domain.repository.dto.InfoUserQueueDB;
 import com.qflow.server.domain.repository.dto.QueueDB;
 import com.qflow.server.domain.repository.dto.QueueUserDB;
 import com.qflow.server.domain.repository.dto.UserDB;
 import com.qflow.server.domain.service.QueueService;
+import com.qflow.server.entity.InfoUserQueue;
 import com.qflow.server.entity.Queue;
 import com.qflow.server.entity.QueueUser;
+import com.qflow.server.entity.exceptions.QueueFullException;
 import com.qflow.server.entity.exceptions.QueueuAlreadyExistsException;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
+import com.qflow.server.entity.exceptions.UserAlreadyInQueue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +37,7 @@ public class QueueServiceTest {
     @Mock
     private QueueRepository queueRepository;
 
+    @Mock
     private QueueAdapter queueAdapter = new QueueAdapter();
 
     private QueueService queueService;
@@ -46,9 +51,13 @@ public class QueueServiceTest {
 
     private QueueUserDB queueUserDBMock;
 
+    @Mock
     private QueueUserRepository queueUserRepository;
 
+    @Mock
     private InfoUserQueueRepository infoUserQueueRepository;
+
+    private InfoUserQueueDB infoUserQueueDB;
 
     @BeforeEach
     void setUp() {
@@ -72,6 +81,8 @@ public class QueueServiceTest {
         queueDBFinishedListMock = new ArrayList<>();
         queueDBFinishedListMock.add(queueDBMockFinished1);
 
+        queueUserDBMock = new QueueUserDB(1 ,1, 1, true, false, 10);
+        infoUserQueueDB = new InfoUserQueueDB(1, 1);
     }
 
     //----------------------------- GetQueuesByIdUser----------------------------------------------------------------
@@ -164,6 +175,42 @@ public class QueueServiceTest {
         /*
         this.queueService.createQueue(queueToCreate, 1);
         Mockito.verify(queueRepository).save(Mockito.any());*/
+    }
+
+    @Test
+    void joinQueue_queue() {
+
+        Mockito.when(queueRepository.getIdQueueByJoinId(123)).thenReturn(1);
+        Mockito.when(queueUserRepository.getUserInQueue(1, 1)).thenReturn(Optional.empty());
+        Mockito.when(infoUserQueueRepository.getUserInInfoUserQueue(1, 1)).thenReturn(Optional.empty());
+        Mockito.when(queueRepository.getCapacity(1)).thenReturn(100);
+        Mockito.when(queueUserRepository.numActiveQueues(1)).thenReturn(50);
+        Mockito.when(queueUserRepository.getLastPosition(1)).thenReturn(10);
+
+        int idCola = queueService.joinQueue(123, 1);
+        assertEquals(1, idCola);
+        Mockito.verify(queueUserRepository).save(Mockito.any());
+        Mockito.verify(infoUserQueueRepository).save(Mockito.any());
+    }
+
+    @Test
+    void joinQueue_queueFull(){
+        Mockito.when(queueRepository.getIdQueueByJoinId(123)).thenReturn(1);
+        Mockito.when(queueUserRepository.getUserInQueue(1, 1)).thenReturn(Optional.empty());
+        Mockito.when(infoUserQueueRepository.getUserInInfoUserQueue(1, 1)).thenReturn(Optional.empty());
+        Mockito.when(queueRepository.getCapacity(1)).thenReturn(100);
+        Mockito.when(queueUserRepository.numActiveQueues(1)).thenReturn(500);
+        assertThrows(QueueFullException.class, () -> this.queueService.joinQueue(123, 1));
+    }
+
+    @Test
+    void joinQueue_userInQueue(){
+        Mockito.when(queueRepository.getIdQueueByJoinId(123)).thenReturn(1);
+        Mockito.when(queueUserRepository.getUserInQueue(1, 1)).thenReturn(Optional.of(queueUserDBMock));
+        Mockito.when(infoUserQueueRepository.getUserInInfoUserQueue(1, 1)).thenReturn(Optional.of(infoUserQueueDB));
+        Mockito.when(queueRepository.getCapacity(1)).thenReturn(100);
+        Mockito.when(queueUserRepository.numActiveQueues(1)).thenReturn(50);
+        assertThrows(UserAlreadyInQueue.class, () -> this.queueService.joinQueue(123, 1));
     }
 
 }

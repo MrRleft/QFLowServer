@@ -1,6 +1,5 @@
 package com.qflow.server.domain.repository.dto;
 
-import com.qflow.server.entity.Queue;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

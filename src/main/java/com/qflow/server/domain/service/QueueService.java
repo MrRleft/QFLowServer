@@ -32,7 +32,6 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     final private QueueAdapter queueAdapter;
     final private QueueUserRepository queueUserRepository;
     final private InfoUserQueueRepository infoUserQueueRepository;
-    //final private QueueUserAdapter queueUserAdapter;
 
     public QueueService(
             @Autowired final QueueRepository queueRepository,
