@@ -55,5 +55,20 @@ public interface QueueRepository extends JpaRepository<QueueDB, Integer> {
             "FROM queue" +
             " WHERE join_id = :join_id ",
             nativeQuery = true)
-    Integer getIdQueueByJoinId(@Param("join_id") int join_id);
+    Integer getIdQueueByJoinId(@Param("join_id") Integer join_id);
+
+    @Query(value = "SELECT *  FROM queue q JOIN queue_user qu ON\n" +
+            "      q.id = qu.id_queue_qu_fk\n" +
+            "    AND qu.id_user_qu_fk = :userId\n" +
+            "    AND q.date_finished IS NOT NULL",
+            nativeQuery = true)
+    Optional<List<QueueDB>> getQueuesByUserIdFinished(Integer userId);
+
+    @Query(value = "SELECT *  FROM queue q JOIN queue_user qu ON\n" +
+            "      q.id = qu.id_queue_qu_fk\n" +
+            "    AND qu.id_user_qu_fk = :userId\n" +
+            "    AND q.date_finished IS NULL" +
+            "    ORDER BY q.is_locked DESC false LAST",
+            nativeQuery = true)
+    Optional<List<QueueDB>> getQueuesByUserIdNotFinished(Integer userId);
 }

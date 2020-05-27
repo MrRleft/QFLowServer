@@ -5,6 +5,7 @@ import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.domain.service.UserService;
 import com.qflow.server.entity.Queue;
 import com.qflow.server.usecase.queues.CreateQueue;
+import com.qflow.server.usecase.queues.GetQueueByJoinId;
 import com.qflow.server.usecase.queues.GetQueueByQueueId;
 import com.qflow.server.usecase.queues.GetQueuesByUserId;
 import com.qflow.server.usecase.users.CreateUser;
@@ -33,6 +34,9 @@ public class QueueControllerTest {
 
     @MockBean
     private GetQueueByQueueId getQueueByQueueId;
+
+    @MockBean
+    private GetQueueByJoinId getQueueByJoinId;
 
     @MockBean
     private CreateQueue createQueue;
@@ -93,7 +97,7 @@ public class QueueControllerTest {
     }
 
     @Test
-    void getQueue_userId_queue(){
+    void getQueue_userId_FinishedQueues(){
 
         TestRestTemplate restTemplate = new TestRestTemplate();
         restTemplate.getRestTemplate().setInterceptors(
@@ -106,10 +110,10 @@ public class QueueControllerTest {
         Queue queueMock = Queue.QueueBuilder.aQueue().withId(1).build();
         queueListMock.add(queueMock);
 
-        Mockito.when(this.getQueuesByUserId.execute("all","1",  false)).thenReturn(queueListMock);
+        Mockito.when(this.getQueuesByUserId.execute(null,"1",  true)).thenReturn(queueListMock);
 
         final ResponseEntity response =
-                restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdUser?expand=all&locked=false", this.port),
+                restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdUser?finished=true", this.port),
                         HttpMethod.GET,
                         new HttpEntity<>(new HttpHeaders()),
                         String.class,
@@ -119,6 +123,79 @@ public class QueueControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(((String) response.getBody()).contains("1"));
+    }
+
+    @Test
+    void getQueue_userId_AllQueuesFromUser(){
+
+        TestRestTemplate restTemplate = new TestRestTemplate();
+        restTemplate.getRestTemplate().setInterceptors(
+                Collections.singletonList((request, body, execution) -> {
+                    request.getHeaders().add("token", "1");
+                    return execution.execute(request, body);
+                }));
+
+        List<Queue>  queueListMock = new ArrayList<>();
+        Queue queueMock = Queue.QueueBuilder.aQueue().withId(1).build();
+        queueListMock.add(queueMock);
+
+        Mockito.when(this.getQueuesByUserId.execute("alluser","1",  null)).thenReturn(queueListMock);
+
+        final ResponseEntity response =
+                restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdUser?expand=alluser", this.port),
+                        HttpMethod.GET,
+                        new HttpEntity<>(new HttpHeaders()),
+                        String.class,
+                        new Object());
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((String) response.getBody()).contains("1"));
+    }
+
+    @Test
+    void getQueue_joinId_correct(){
+
+        Queue queueMock = Queue.QueueBuilder.aQueue().withId(1).build();
+
+        Mockito.when(this.getQueueByJoinId.execute(1)).thenReturn(queueMock);
+
+
+        final ResponseEntity response =
+                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdJoin/1", this.port),
+                        HttpMethod.GET,
+                        new HttpEntity<>(new HttpHeaders()),
+                        String.class,
+                        new Object());
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((String) response.getBody()).contains("1"));
+
+    }
+
+    @Test
+    void getQueue_joinId_noQueue(){
+
+        Queue queueMock = Queue.QueueBuilder.aQueue().withId(1).build();
+
+        Mockito.when(this.getQueueByJoinId.execute(1)).thenReturn(queueMock);
+
+
+        final ResponseEntity response =
+                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/byIdJoin/1", this.port),
+                        HttpMethod.GET,
+                        new HttpEntity<>(new HttpHeaders()),
+                        String.class,
+                        new Object());
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((String) response.getBody()).contains("1"));
+
     }
 
     @Test

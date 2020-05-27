@@ -14,10 +14,7 @@ import com.qflow.server.entity.exceptions.QueueFullException;
 import com.qflow.server.entity.exceptions.QueueuAlreadyExistsException;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
 import com.qflow.server.entity.exceptions.UserAlreadyInQueue;
-import com.qflow.server.usecase.queues.CreateQueueDatabase;
-import com.qflow.server.usecase.queues.GetQueueByQueueIdDatabase;
-import com.qflow.server.usecase.queues.GetQueuesByUserIdDatabase;
-import com.qflow.server.usecase.queues.JoinQueueDatabase;
+import com.qflow.server.usecase.queues.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +25,7 @@ import java.util.Optional;
 import java.util.Random;
 
 @Service
-public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueIdDatabase, CreateQueueDatabase, JoinQueueDatabase {
+public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueIdDatabase, GetQueueByJoinIdDatabase, CreateQueueDatabase, JoinQueueDatabase {
 
 
     final private QueueRepository queueRepository;
@@ -49,24 +46,21 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     }
 
     @Override
-    public List<Queue> getQueuesByUserId(String expand, int idUser, Boolean locked) {
-
+    public List<Queue> getQueuesByUserId(String expand, int idUser, Boolean finished) {
         Optional<List<QueueDB>> queueDBListOptional = null;
-        if(expand != null) {
-            if(expand.equals("all")) {
-                if (locked == null) {   //Showing all queues with locked as true or false
-                    queueDBListOptional = queueRepository.getAllQueues();
-                } else{  //Fetching all queues by locked status
-                    queueDBListOptional = queueRepository.getQueuesByLocked(locked);
-                }
-            }else if(expand.equalsIgnoreCase("alluser")){
+
+        if(finished == null){    //Me da igual que hayan acabado o no -> AllFromUser, allQueues
+            if(expand.equalsIgnoreCase("alluser"))   //All queues from the user
                 queueDBListOptional = queueRepository.getAllQueuesByUserId(idUser);
-            }else{
+            else if(expand.equalsIgnoreCase("all"))
+                queueDBListOptional = queueRepository.getAllQueues();
+            else
                 throw new QueueNotFoundException("expand value not identified");
-            }
-        }else{  //Fetching queues that the user's in with locked as true or false (expand can be null)
-            queueDBListOptional = queueRepository.getQueuesByUserIdLocked(idUser, locked);
-        }
+        }else if(finished)
+            queueDBListOptional = queueRepository.getQueuesByUserIdFinished(idUser);
+        else
+            queueDBListOptional = queueRepository.getQueuesByUserIdNotFinished(idUser);
+
 
         if(!queueDBListOptional.isPresent()){
             throw new QueueNotFoundException("Queues not found");
@@ -82,6 +76,20 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         }
         return queueAdapter.queueDBToQueue(queueDBOptional.get());
     }
+
+    @Override
+    public Queue getQueueByJoinId(int joinId) {
+        Optional<QueueDB> queueDBOptional = null;
+        Integer idQueue =  queueRepository.getIdQueueByJoinId(joinId);
+
+        if(idQueue == null)
+            throw new QueueNotFoundException("Queue with id: " + idQueue + " not found");
+        else
+            queueDBOptional = queueRepository.findById(idQueue);
+
+        return queueAdapter.queueDBToQueue(queueDBOptional.get());
+    }
+
 
     @Override
     public void createQueue(Queue queue, int userId) {
@@ -128,3 +136,12 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     }
 
 }
+
+
+/*if(expand.equals("all")) {
+                if (locked == null) {   //All queues from DB
+                    queueDBListOptional = queueRepository.getAllQueues();
+                } else{     //All queues from DB by locked status
+                    queueDBListOptional = queueRepository.getQueuesByLocked(locked);
+                }
+            }else */
