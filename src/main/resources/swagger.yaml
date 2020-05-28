@@ -1,0 +1,362 @@
+openapi: 3.0.1
+info:
+  title: defaultTitle
+  description: defaultDescription
+  version: "0.2"
+servers:
+  - url: 'http://heroku-qflow.herokuapp.com'
+paths:
+  /qflow/queues/joinQueue/43619:
+    post:
+      description: Auto generated using Swagger Inspector
+      parameters:
+        - name: token
+          in: header
+          schema:
+            type: string
+          example: '[B@3c516c7f'
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+              examples:
+                '0':
+                  value: '1'
+      servers:
+        - url: 'http://heroku-qflow.herokuapp.com'
+    servers:
+      - url: 'http://heroku-qflow.herokuapp.com'
+  /qflow/user/:
+    put:
+      description: Auto generated using Swagger Inspector
+      parameters:
+        - name: password
+          in: header
+          schema:
+            type: string
+          example: ro
+        - name: mail
+          in: header
+          schema:
+            type: string
+          example: ro
+        - name: isAdmin
+          in: header
+          schema:
+            type: string
+          example: 'false'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                profile_picture:
+                  type: string
+                id: {}
+                email:
+                  type: string
+                name_lastname:
+                  type: string
+                username:
+                  type: string
+            examples:
+              '0':
+                value: |-
+                  {
+                      "id": null,
+                      "email": "pruebaro@ro",
+                      "name_lastname": "pruebaro",
+                      "password": "12345",
+                      "profile_picture": "",
+                      "username":"prueba"
+                  }
+              '1':
+                value: |-
+                  {
+                      "id": null,
+                      "email": "pruebavic@vic",
+                      "name_lastname": "pruebavic",
+                      "password": "12345",
+                      "profile_picture": "",
+                      "username":"pruebavic"
+                  }
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  username:
+                    type: string
+                  token:
+                    type: string
+              examples:
+                '0':
+                  value: >-
+                    {"username":"pepevilluela","email":"pepe.example","token":"32345"}
+                '1':
+                  value: '{"username":"ro","email":"ro","token":"[B@4eaec983"}'
+      servers:
+        - url: 'http://heroku-qflow.herokuapp.com'
+    post:
+      description: Auto generated using Swagger Inspector
+      parameters:
+        - name: isAdmin
+          in: header
+          schema:
+            type: string
+          example: 'false'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                profile_picture:
+                  type: string
+                id: {}
+                email:
+                  type: string
+                name_lastname:
+                  type: string
+                username:
+                  type: string
+            examples:
+              '0':
+                value: |-
+                  {
+                      "id": null,
+                      "email": "pruebaro@ro",
+                      "name_lastname": "pruebaro",
+                      "password": "12345",
+                      "profile_picture": "",
+                      "username":"prueba"
+                  }
+              '1':
+                value: |-
+                  {
+                      "id": null,
+                      "email": "pruebavic@vic",
+                      "name_lastname": "pruebavic",
+                      "password": "12345",
+                      "profile_picture": "",
+                      "username":"pruebavic"
+                  }
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  username:
+                    type: string
+                  token:
+                    type: string
+              examples:
+                '0':
+                  value: >-
+                    {"username":"prueba","email":"pruebaro@ro","token":"[B@16b78808"}
+                '1':
+                  value: >-
+                    {"username":"pruebavic","email":"pruebavic@vic","token":"[B@2f3e43ae"}
+      servers:
+        - url: 'http://heroku-qflow.herokuapp.com'
+    servers:
+      - url: 'http://heroku-qflow.herokuapp.com'
+  /qflow/queues/byIdUser/:
+    get:
+      description: Auto generated using Swagger Inspector
+      parameters:
+        - name: expand
+          in: query
+          schema:
+            type: string
+          example: all
+        - name: locked
+          in: query
+          schema:
+            type: boolean
+          example: 'false'
+        - name: token
+          in: header
+          schema:
+            type: string
+          example: '32345'
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+              examples:
+                '0':
+                  value: >-
+                    [{"id":4,"name":"hola","description":"si","joinId":11393,"dateCreated":"2020-05-23T12:04:21.160+0000","dateFinished":null,"capacity":12,"currentPos":1,"businessAssociated":"sony","lock":true},{"id":7,"name":"bobo","description":"holitis1","joinId":61044,"dateCreated":"2020-05-23T12:17:37.997+0000","dateFinished":null,"capacity":12,"currentPos":1,"businessAssociated":"sony","lock":true},{"id":8,"name":"Prueba2","description":"Prueba2Des","joinId":17705,"dateCreated":"2020-05-23T12:29:06.471+0000","dateFinished":null,"capacity":123,"currentPos":1,"businessAssociated":"Sony","lock":true},{"id":9,"name":"Example1","description":"desExample","joinId":45283,"dateCreated":"2020-05-23T12:34:17.873+0000","dateFinished":null,"capacity":11,"currentPos":1,"businessAssociated":"Sony","lock":true},{"id":10,"name":"bebealcohol","description":"bebedes","joinId":78925,"dateCreated":"2020-05-23T12:36:53.901+0000","dateFinished":null,"capacity":1234,"currentPos":1,"businessAssociated":"sony","lock":true},{"id":6,"name":"bobo","description":"bob3","joinId":96842,"dateCreated":"2020-05-23T12:11:48.202+0000","dateFinished":"2020-05-23T18:03:53.000+0000","capacity":12,"currentPos":1,"businessAssociated":"sony","lock":true},{"id":5,"name":"hola","description":"bebe","joinId":10300,"dateCreated":"2020-05-23T12:08:12.240+0000","dateFinished":"2020-05-23T18:03:51.000+0000","capacity":123,"currentPos":1,"businessAssociated":"sony","lock":true},{"id":2,"name":"Queue
+                    by hand","description":"Queue by hand for
+                    testing","joinId":43019,"dateCreated":"2020-05-23T17:31:05.000+0000","dateFinished":null,"capacity":140,"currentPos":1,"businessAssociated":"Test
+                    business","lock":true},{"id":3,"name":"Queue by hand
+                    b","description":"Queue by hand for
+                    testing","joinId":12343,"dateCreated":"2020-05-23T17:31:06.000+0000","dateFinished":null,"capacity":200,"currentPos":1,"businessAssociated":"Test
+                    business","lock":false},{"id":1,"name":"Test","description":"Queue
+                    Test","joinId":43619,"dateCreated":"2020-05-23T17:31:02.000+0000","dateFinished":null,"capacity":300,"currentPos":1,"businessAssociated":"Test
+                    business","lock":false}]
+      servers:
+        - url: 'http://heroku-qflow.herokuapp.com'
+    servers:
+      - url: 'http://heroku-qflow.herokuapp.com'
+  /qflow/queues/byIdJoin/43619:
+    get:
+      description: Auto generated using Swagger Inspector
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dateCreated:
+                    type: string
+                  dateFinished: {}
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  lock:
+                    type: boolean
+                  joinId:
+                    type: integer
+                  id:
+                    type: integer
+                  currentPos:
+                    type: integer
+                  businessAssociated:
+                    type: string
+                  capacity:
+                    type: integer
+              examples:
+                '0':
+                  value: >-
+                    {"id":1,"name":"Test","description":"Queue
+                    Test","joinId":43619,"dateCreated":"2020-05-23T17:31:02.000+0000","dateFinished":null,"capacity":300,"currentPos":1,"businessAssociated":"Test
+                    business","lock":false}
+      servers:
+        - url: 'http://heroku-qflow.herokuapp.com'
+    servers:
+      - url: 'http://heroku-qflow.herokuapp.com'
+  /qflow/queues/:
+    post:
+      description: Auto generated using Swagger Inspector
+      parameters:
+        - name: token
+          in: header
+          schema:
+            type: string
+          example: '32345'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isLock:
+                  type: boolean
+                dateCreated:
+                  type: string
+                dateFinished:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                currentPos:
+                  type: integer
+                businessAssociated:
+                  type: string
+                capacity:
+                  type: integer
+            examples:
+              '0':
+                value: |-
+                  {
+                      "name": "cola swagger",
+                      "description": "Prueba swagger",
+                      "dateCreated": "2020-27-23T17:31:05.000+0000",
+                      "dateFinished": "2020-28-23T17:31:05.000+0000",
+                      "capacity": 300,
+                      "currentPos": 1,
+                      "isLock": false,
+                      "businessAssociated": "swaggerorg"
+
+                  }
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            text/plain;charset=UTF-8:
+              schema:
+                type: string
+              examples: {}
+      servers:
+        - url: 'http://heroku-qflow.herokuapp.com'
+    servers:
+      - url: 'http://heroku-qflow.herokuapp.com'
+  /qflow/queues/byIdQueue/1:
+    get:
+      description: Auto generated using Swagger Inspector
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dateCreated:
+                    type: string
+                  dateFinished: {}
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  lock:
+                    type: boolean
+                  joinId:
+                    type: integer
+                  id:
+                    type: integer
+                  currentPos:
+                    type: integer
+                  businessAssociated:
+                    type: string
+                  capacity:
+                    type: integer
+              examples:
+                '0':
+                  value: >-
+                    {"id":1,"name":"Test","description":"Queue
+                    Test","joinId":43619,"dateCreated":"2020-05-23T17:31:02.000+0000","dateFinished":null,"capacity":300,"currentPos":1,"businessAssociated":"Test
+                    business","lock":false}
+      servers:
+        - url: 'http://heroku-qflow.herokuapp.com'
+    servers:
+      - url: 'http://heroku-qflow.herokuapp.com'
