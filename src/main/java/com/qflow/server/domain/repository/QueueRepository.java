@@ -64,11 +64,10 @@ public interface QueueRepository extends JpaRepository<QueueDB, Integer> {
             nativeQuery = true)
     Optional<List<QueueDB>> getQueuesByUserIdFinished(Integer userId);
 
-    @Query(value = "SELECT *  FROM queue q JOIN queue_user qu ON\n" +
-            "      q.id = qu.id_queue_qu_fk\n" +
-            "    AND qu.id_user_qu_fk = :userId\n" +
-            "    AND q.date_finished IS NULL" +
-            "    ORDER BY q.is_locked DESC false LAST",
+    @Query(value = "SELECT *  FROM queue q JOIN queue_user qu ON q.id = qu.id_queue_qu_fk\n\n" +
+            "      AND qu.id_user_qu_fk = :userId\n" +
+            "    AND q.date_finished IS NULL\n" +
+            "    ORDER BY q.is_locked ASC",
             nativeQuery = true)
     Optional<List<QueueDB>> getQueuesByUserIdNotFinished(Integer userId);
 }
