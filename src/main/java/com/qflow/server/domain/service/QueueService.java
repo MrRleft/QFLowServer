@@ -1,7 +1,6 @@
 package com.qflow.server.domain.service;
 
 import com.qflow.server.adapter.QueueAdapter;
-import com.qflow.server.adapter.QueueUserAdapter;
 import com.qflow.server.domain.repository.InfoUserQueueRepository;
 import com.qflow.server.domain.repository.QueueRepository;
 import com.qflow.server.domain.repository.QueueUserRepository;
@@ -9,9 +8,7 @@ import com.qflow.server.domain.repository.dto.InfoUserQueueDB;
 import com.qflow.server.domain.repository.dto.QueueDB;
 import com.qflow.server.domain.repository.dto.QueueUserDB;
 import com.qflow.server.entity.Queue;
-import com.qflow.server.entity.QueueUser;
 import com.qflow.server.entity.exceptions.QueueFullException;
-import com.qflow.server.entity.exceptions.QueueuAlreadyExistsException;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
 import com.qflow.server.entity.exceptions.UserAlreadyInQueue;
 import com.qflow.server.usecase.queues.*;
@@ -19,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueIdDatabase, GetQueueByJoinIdDatabase, CreateQueueDatabase, JoinQueueDatabase {
@@ -32,6 +26,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     final private QueueAdapter queueAdapter;
     final private QueueUserRepository queueUserRepository;
     final private InfoUserQueueRepository infoUserQueueRepository;
+
     //final private QueueUserAdapter queueUserAdapter;
 
     public QueueService(
@@ -61,11 +56,18 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         else
             queueDBListOptional = queueRepository.getQueuesByUserIdNotFinished(idUser);
 
-
         if(!queueDBListOptional.isPresent()){
             throw new QueueNotFoundException("Queues not found");
         }
-        return queueAdapter.queueDBListToQueueList(queueDBListOptional.get());
+
+        List<Queue> queueList = new ArrayList<>();
+        for(QueueDB queueDB : queueDBListOptional.get()){
+            Queue aux = queueAdapter.queueDBToQueue(queueDB);
+            aux.setNumPersons(queueUserRepository.numPersonsInQueue(aux.getId()));
+            queueList.add(aux);
+        }
+
+        return queueList;
     }
 
     @Override
@@ -74,7 +76,9 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         if(!queueDBOptional.isPresent()){
             throw new QueueNotFoundException("Queue with id: " + idQueue + " not found");
         }
-        return queueAdapter.queueDBToQueue(queueDBOptional.get());
+        Queue ret = queueAdapter.queueDBToQueue(queueDBOptional.get());
+        ret.setNumPersons(queueUserRepository.numPersonsInQueue(idQueue));
+        return ret;
     }
 
     @Override
@@ -87,7 +91,9 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         else
             queueDBOptional = queueRepository.findById(idQueue);
 
-        return queueAdapter.queueDBToQueue(queueDBOptional.get());
+        Queue ret = queueAdapter.queueDBToQueue(queueDBOptional.get());
+        ret.setNumPersons(queueUserRepository.numPersonsInQueue(idQueue));
+        return ret;
     }
 
 
@@ -103,6 +109,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
             queue.setDateCreated(timestamp);
             queue.setIsLocked(true);
             queue.setCurrentPos(1);
+            queue.setNumPersons(0);
             QueueDB aux = queueRepository.save(queueAdapter.queueToQueueDB(queue));
 
             //TODO check the id of queue_user
@@ -117,7 +124,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         Optional<QueueUserDB> queueUser = queueUserRepository.getUserInQueue(idUser, idQueue);
         Optional<InfoUserQueueDB> infoUserQueue = infoUserQueueRepository.getUserInInfoUserQueue(idUser, idQueue);
         Integer capacity = queueRepository.getCapacity(idQueue);
-        Integer numQueues = queueUserRepository.numActiveQueues(idQueue);
+        Integer numQueues = queueUserRepository.numPersonsInQueue(idQueue);
         if(capacity > numQueues) {
             if (!queueUser.isPresent() && !infoUserQueue.isPresent()) {
                 Integer pos = queueUserRepository.getLastPosition(idQueue);
@@ -133,6 +140,12 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         else {
             throw new QueueFullException("Queue full");
         }
+    }
+
+    private int getInfrontOfUser(int userId, int currentPosFromQueue){
+
+
+        return 0;
     }
 
 }

@@ -17,6 +17,7 @@ public class Queue {
     private int currentPos;
     private Boolean isLock;
     private String businessAssociated;
+    private int numPersons;
 
     public Queue() {
     }
@@ -59,6 +60,14 @@ public class Queue {
 
     public String getBusinessAssociated() {
         return businessAssociated;
+    }
+
+    public int getNumPersons() {
+        return numPersons;
+    }
+
+    public void setNumPersons(int numPersons) {
+        this.numPersons = numPersons;
     }
 
     public void setJoinId(Integer rnd) {

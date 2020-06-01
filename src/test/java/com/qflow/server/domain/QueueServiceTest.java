@@ -9,7 +9,6 @@ import com.qflow.server.domain.repository.dto.QueueUserDB;
 import com.qflow.server.domain.repository.dto.UserDB;
 import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.entity.Queue;
-import com.qflow.server.entity.QueueUser;
 import com.qflow.server.entity.exceptions.QueueuAlreadyExistsException;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +45,7 @@ public class QueueServiceTest {
 
     private QueueUserDB queueUserDBMock;
 
+    @Mock
     private QueueUserRepository queueUserRepository;
 
     private InfoUserQueueRepository infoUserQueueRepository;
@@ -116,6 +116,7 @@ public class QueueServiceTest {
     void getQueueById_joinId_queue(){
         Mockito.when(queueRepository.getIdQueueByJoinId(1)).thenReturn(1);
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.of(queueDBMock));
+        Mockito.when(queueUserRepository.numPersonsInQueue(1)).thenReturn(30);
 
         Queue res = queueService.getQueueByJoinId(1);
 
@@ -136,6 +137,8 @@ public class QueueServiceTest {
     @Test
     void getQueueById_queueId_queue(){
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.of(queueDBMock));
+        Mockito.when(queueUserRepository.numPersonsInQueue(1)).thenReturn(30);
+
         Queue res = queueService.getQueueByQueueId(1);
         assertEquals(res.getName(), "ExampleNotFinished");
     }
