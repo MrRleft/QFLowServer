@@ -62,9 +62,19 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
 
         List<Queue> queueList = new ArrayList<>();
         for(QueueDB queueDB : queueDBListOptional.get()){
-            Queue aux = queueAdapter.queueDBToQueue(queueDB);
-            aux.setNumPersons(queueUserRepository.numPersonsInQueue(aux.getId()));
-            queueList.add(aux);
+            Queue ret = queueAdapter.queueDBToQueue(queueDB);
+
+            Optional<QueueUserDB> quDB = queueUserRepository.getUserInQueue(idUser, ret.getId());
+            if(quDB.isPresent()) {
+                int posUser = quDB.get().getPosition();
+                int numPersons  = ret.getCurrentPos();
+                ret.setInFrontOfUser(quDB.get().getPosition() - ret.getCurrentPos());
+            }
+            else
+                ret.setInFrontOfUser(-1);
+
+            ret.setNumPersons(queueDB.getCurrentPos());
+            queueList.add(ret);
         }
 
         return queueList;
@@ -77,6 +87,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
             throw new QueueNotFoundException("Queue with id: " + idQueue + " not found");
         }
         Queue ret = queueAdapter.queueDBToQueue(queueDBOptional.get());
+
         ret.setNumPersons(queueUserRepository.numPersonsInQueue(idQueue));
         return ret;
     }
@@ -92,6 +103,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
             queueDBOptional = queueRepository.findById(idQueue);
 
         Queue ret = queueAdapter.queueDBToQueue(queueDBOptional.get());
+
         ret.setNumPersons(queueUserRepository.numPersonsInQueue(idQueue));
         return ret;
     }

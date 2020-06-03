@@ -18,6 +18,7 @@ public class Queue {
     private Boolean isLock;
     private String businessAssociated;
     private int numPersons;
+    private int inFrontOfUser;
 
     public Queue() {
     }
@@ -62,13 +63,13 @@ public class Queue {
         return businessAssociated;
     }
 
-    public int getNumPersons() {
-        return numPersons;
-    }
+    public int getNumPersons() { return numPersons; }
 
-    public void setNumPersons(int numPersons) {
-        this.numPersons = numPersons;
-    }
+    public int getInFrontOfUser() { return inFrontOfUser; }
+
+    public void setInFrontOfUser(int inFrontOfUser) { this.inFrontOfUser = inFrontOfUser; }
+
+    public void setNumPersons(int numPersons) { this.numPersons = numPersons; }
 
     public void setJoinId(Integer rnd) {
         this.joinId = rnd;
