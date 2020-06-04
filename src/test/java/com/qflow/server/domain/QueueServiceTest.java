@@ -218,6 +218,26 @@ public class QueueServiceTest {
     }
 
     @Test
+    void resumeQueue_queue() {
+        Instant instant = Instant.now();
+        Timestamp.from(instant);
+        Queue queueToResume = Queue.QueueBuilder.aQueue()
+                .withId(10)
+                .withJoinId(222)
+                .withBusinessAssociated("sony")
+                .withCapacity(100)
+                .withDescription("mala")
+                .withName("pepe")
+                .withCurrentPos(1)
+                .withDateCreated(Timestamp.from(instant))
+                .withDateFinished(Timestamp.from(instant))
+                .withIsLock(true)
+                .build();
+        queueService.resumeQueue(queueToResume);
+        Mockito.verify(queueRepository).save(Mockito.any());
+    }
+
+    @Test
     void joinQueue_queue() {
 
         Mockito.when(queueRepository.getIdQueueByJoinId(123)).thenReturn(1);
