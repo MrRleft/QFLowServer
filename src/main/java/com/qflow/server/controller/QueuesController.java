@@ -23,6 +23,7 @@ public class QueuesController {
     private final CreateQueue createQueue;
     private final JoinQueue joinQueue;
     private final QueueAdapter queueAdapter;
+    private final StopQueue stopQueue;
 
 
 
@@ -31,13 +32,15 @@ public class QueuesController {
                             @Autowired final GetQueueByJoinId getQueueByJoinId,
                             @Autowired final CreateQueue createQueue,
                             @Autowired final JoinQueue joinQueue,
-                            @Autowired final QueueAdapter queueAdapter) {
+                            @Autowired final QueueAdapter queueAdapter,
+                            @Autowired final StopQueue stopQueue) {
         this.getQueuesByUserId = getQueuesByUserId;
         this.getQueueByQueueId = getQueueByQueueId;
         this.getQueueByJoinId = getQueueByJoinId;
         this.createQueue = createQueue;
         this.joinQueue = joinQueue;
         this.queueAdapter = queueAdapter;
+        this.stopQueue = stopQueue;
     }
 
     @GetMapping("/byIdUser")
@@ -81,6 +84,13 @@ public class QueuesController {
         Integer idQueue = this.joinQueue.execute(joinCode, token);
         return new ResponseEntity<>(idQueue,
                 HttpStatus.OK);
+    }
+
+    @GetMapping("/stopQueue/{idQueue}")
+    public ResponseEntity<Queue> stopQueue(@PathVariable("idQueue")
+                                               final int idQueue) {
+        return new ResponseEntity<>(
+                this.stopQueue.execute(idQueue), HttpStatus.OK);
     }
 }
 
