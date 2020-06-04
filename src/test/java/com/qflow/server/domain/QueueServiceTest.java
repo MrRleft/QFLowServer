@@ -193,7 +193,29 @@ public class QueueServiceTest {
                 .withJoinId(1133).build();
         /*
         this.queueService.createQueue(queueToCreate, 1);
-        Mockito.verify(queueRepository).save(Mockito.any());*/
+        Mockito.verify(queueRepository).save(Mockito.any());
+        */
+    }
+
+    @Test
+    void stopQueue_queue() {
+        Instant instant = Instant.now();
+        Timestamp.from(instant);
+        QueueDB queueDB = new QueueDB();
+        Queue queueToStop = Queue.QueueBuilder.aQueue()
+                .withId(10)
+                .withJoinId(222)
+                .withBusinessAssociated("sony")
+                .withCapacity(100)
+                .withDescription("mala")
+                .withName("pepe")
+                .withCurrentPos(1)
+                .withDateCreated(Timestamp.from(instant))
+                .withDateFinished(Timestamp.from(instant))
+                .withIsLock(false)
+                .build();
+        //Mockito.when(queueRepository.findById(queueToStop.getId())).thenReturn(Optional.of());
+        queueToStop.setIsLocked(true);
     }
 
     @Test

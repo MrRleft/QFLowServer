@@ -19,7 +19,8 @@ import java.sql.Timestamp;
 import java.util.*;
 
 @Service
-public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueIdDatabase, GetQueueByJoinIdDatabase, CreateQueueDatabase, JoinQueueDatabase {
+public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueIdDatabase, GetQueueByJoinIdDatabase,
+        CreateQueueDatabase, JoinQueueDatabase, StopQueueDataBase {
 
 
     final private QueueRepository queueRepository;
@@ -152,10 +153,19 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         }
     }
 
-    private int getInfrontOfUser(int userId, int currentPosFromQueue){
-
-
-        return 0;
+    @Override
+    public Queue stopQueue(Queue queue) {
+        Optional<QueueDB> queueDBOptional = queueRepository.findById(queue.getId());
+        QueueDB queueDB;
+        if(!queueDBOptional.isPresent()) {
+            throw new QueueNotFoundException("Queue with id: " + queue.getId() + " not found");
+        }
+        else {
+            queue.setIsLocked(true);
+            queueDB = queueAdapter.queueToQueueDB(queue);
+            queueRepository.save(queueDB);
+        }
+        return queueAdapter.queueDBToQueue(queueDB);
     }
 
 }
