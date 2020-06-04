@@ -201,7 +201,6 @@ public class QueueServiceTest {
     void stopQueue_queue() {
         Instant instant = Instant.now();
         Timestamp.from(instant);
-        QueueDB queueDB = new QueueDB();
         Queue queueToStop = Queue.QueueBuilder.aQueue()
                 .withId(10)
                 .withJoinId(222)
@@ -214,8 +213,8 @@ public class QueueServiceTest {
                 .withDateFinished(Timestamp.from(instant))
                 .withIsLock(false)
                 .build();
-        //Mockito.when(queueRepository.findById(queueToStop.getId())).thenReturn(Optional.of());
-        queueToStop.setIsLocked(true);
+        queueService.stopQueue(queueToStop);
+        Mockito.verify(queueRepository).save(Mockito.any());
     }
 
     @Test
@@ -225,7 +224,7 @@ public class QueueServiceTest {
         Mockito.when(queueUserRepository.getUserInQueue(1, 1)).thenReturn(Optional.empty());
         Mockito.when(infoUserQueueRepository.getUserInInfoUserQueue(1, 1)).thenReturn(Optional.empty());
         Mockito.when(queueRepository.getCapacity(1)).thenReturn(100);
-        Mockito.when(queueUserRepository.numActiveQueues(1)).thenReturn(50);
+        Mockito.when(queueUserRepository.numPersonsInQueue(1)).thenReturn(50);
         Mockito.when(queueUserRepository.getLastPosition(1)).thenReturn(10);
 
         int idCola = queueService.joinQueue(123, 1);
@@ -240,7 +239,7 @@ public class QueueServiceTest {
         Mockito.when(queueUserRepository.getUserInQueue(1, 1)).thenReturn(Optional.empty());
         Mockito.when(infoUserQueueRepository.getUserInInfoUserQueue(1, 1)).thenReturn(Optional.empty());
         Mockito.when(queueRepository.getCapacity(1)).thenReturn(100);
-        Mockito.when(queueUserRepository.numActiveQueues(1)).thenReturn(500);
+        Mockito.when(queueUserRepository.numPersonsInQueue(1)).thenReturn(500);
         assertThrows(QueueFullException.class, () -> this.queueService.joinQueue(123, 1));
     }
 
@@ -250,7 +249,7 @@ public class QueueServiceTest {
         Mockito.when(queueUserRepository.getUserInQueue(1, 1)).thenReturn(Optional.of(queueUserDBMock));
         Mockito.when(infoUserQueueRepository.getUserInInfoUserQueue(1, 1)).thenReturn(Optional.of(infoUserQueueDB));
         Mockito.when(queueRepository.getCapacity(1)).thenReturn(100);
-        Mockito.when(queueUserRepository.numActiveQueues(1)).thenReturn(50);
+        Mockito.when(queueUserRepository.numPersonsInQueue(1)).thenReturn(50);
         assertThrows(UserAlreadyInQueue.class, () -> this.queueService.joinQueue(123, 1));
     }
 

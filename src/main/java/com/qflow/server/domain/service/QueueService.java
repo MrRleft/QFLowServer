@@ -155,16 +155,12 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
 
     @Override
     public Queue stopQueue(Queue queue) {
-        Optional<QueueDB> queueDBOptional = queueRepository.findById(queue.getId());
         QueueDB queueDB;
-        if(!queueDBOptional.isPresent()) {
-            throw new QueueNotFoundException("Queue with id: " + queue.getId() + " not found");
-        }
-        else {
-            queue.setIsLocked(true);
-            queueDB = queueAdapter.queueToQueueDB(queue);
-            queueRepository.save(queueDB);
-        }
+
+        queue.setIsLocked(true);
+        queueDB = queueAdapter.queueToQueueDB(queue);
+        queueRepository.save(queueDB);
+
         return queueAdapter.queueDBToQueue(queueDB);
     }
 
