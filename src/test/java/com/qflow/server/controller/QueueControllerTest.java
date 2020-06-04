@@ -4,10 +4,7 @@ import com.qflow.server.adapter.QueueAdapter;
 import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.domain.service.UserService;
 import com.qflow.server.entity.Queue;
-import com.qflow.server.usecase.queues.CreateQueue;
-import com.qflow.server.usecase.queues.GetQueueByJoinId;
-import com.qflow.server.usecase.queues.GetQueueByQueueId;
-import com.qflow.server.usecase.queues.GetQueuesByUserId;
+import com.qflow.server.usecase.queues.*;
 import com.qflow.server.usecase.users.CreateUser;
 import com.qflow.server.usecase.users.GetUserByToken;
 import com.qflow.server.usecase.users.LoginUser;
@@ -22,6 +19,8 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,6 +51,9 @@ public class QueueControllerTest {
 
     @MockBean
     private CreateUser createUser;
+
+    @MockBean
+    private StopQueue stopQueue;
 
 
     @MockBean
@@ -199,8 +201,35 @@ public class QueueControllerTest {
     }
 
     @Test
-    void creatQueue_queueId_queue(){
+    void stopQueue_queue() {
+        Instant instant = Instant.now();
+        Timestamp.from(instant);
+        Queue queueToStop = Queue.QueueBuilder.aQueue()
+                .withId(10)
+                .withJoinId(222)
+                .withBusinessAssociated("sony")
+                .withCapacity(100)
+                .withDescription("mala")
+                .withName("pepe")
+                .withCurrentPos(1)
+                .withDateCreated(Timestamp.from(instant))
+                .withDateFinished(Timestamp.from(instant))
+                .withIsLock(false)
+                .build();
 
+        Mockito.when(this.stopQueue.execute(1)).thenReturn(queueToStop);
+
+        final ResponseEntity response =
+                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/stopQueue/1", this.port),
+                        HttpMethod.GET,
+                        new HttpEntity<>(new HttpHeaders()),
+                        String.class,
+                        new Object());
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((String) response.getBody()).contains("1"));
     }
 
 }
