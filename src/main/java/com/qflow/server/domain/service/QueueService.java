@@ -20,7 +20,7 @@ import java.util.*;
 
 @Service
 public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueIdDatabase, GetQueueByJoinIdDatabase,
-        CreateQueueDatabase, JoinQueueDatabase, StopQueueDataBase {
+        CreateQueueDatabase, JoinQueueDatabase, StopQueueDataBase, ResumeQueueDataBase {
 
 
     final private QueueRepository queueRepository;
@@ -158,6 +158,17 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         QueueDB queueDB;
 
         queue.setIsLocked(true);
+        queueDB = queueAdapter.queueToQueueDB(queue);
+        queueRepository.save(queueDB);
+
+        return queueAdapter.queueDBToQueue(queueDB);
+    }
+
+    @Override
+    public Queue resumeQueue(Queue queue) {
+        QueueDB queueDB;
+
+        queue.setIsLocked(false);
         queueDB = queueAdapter.queueToQueueDB(queue);
         queueRepository.save(queueDB);
 

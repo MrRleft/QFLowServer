@@ -54,6 +54,11 @@ public class BeanConfig {
         return new StopQueue(queueService, getQueueByQueueId);
     }
 
+    @Bean
+    public ResumeQueue resumeQueue(@Autowired QueueService queueService, @Autowired GetQueueByQueueId getQueueByQueueId) {
+        return new ResumeQueue(queueService, getQueueByQueueId);
+    }
+
     //User
     @Bean
     public GetUserByToken getUserByToken(@Autowired UserService userService){
