@@ -79,6 +79,10 @@ public class Queue {
         this.dateCreated = timestamp;
     }
 
+    public void setDateFinished(Timestamp timestamp) {
+        this.dateFinished = timestamp;
+    }
+
     public void setIsLocked(boolean b) {
         this.isLock = b;
     }

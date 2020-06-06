@@ -1,17 +1,21 @@
 package com.qflow.server.domain.service;
 
 import com.qflow.server.adapter.QueueAdapter;
+import com.qflow.server.domain.repository.ActivePeriodRepository;
 import com.qflow.server.domain.repository.InfoUserQueueRepository;
 import com.qflow.server.domain.repository.QueueRepository;
 import com.qflow.server.domain.repository.QueueUserRepository;
+import com.qflow.server.domain.repository.dto.ActivePeriodDB;
 import com.qflow.server.domain.repository.dto.InfoUserQueueDB;
 import com.qflow.server.domain.repository.dto.QueueDB;
 import com.qflow.server.domain.repository.dto.QueueUserDB;
+import com.qflow.server.entity.ActivePeriod;
 import com.qflow.server.entity.Queue;
 import com.qflow.server.entity.exceptions.QueueFullException;
 import com.qflow.server.entity.exceptions.QueueNotFoundException;
 import com.qflow.server.entity.exceptions.UserAlreadyInQueue;
 import com.qflow.server.usecase.queues.*;
+import net.bytebuddy.dynamic.TypeResolutionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,23 +24,26 @@ import java.util.*;
 
 @Service
 public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueIdDatabase, GetQueueByJoinIdDatabase,
-        CreateQueueDatabase, JoinQueueDatabase, StopQueueDataBase, ResumeQueueDataBase {
+        CreateQueueDatabase, JoinQueueDatabase, StopQueueDataBase, ResumeQueueDataBase, CloseQueueDataBase {
 
 
     final private QueueRepository queueRepository;
     final private QueueAdapter queueAdapter;
     final private QueueUserRepository queueUserRepository;
     final private InfoUserQueueRepository infoUserQueueRepository;
+    final private ActivePeriodRepository activePeriodRepository;
 
     public QueueService(
             @Autowired final QueueRepository queueRepository,
             @Autowired final QueueAdapter queueAdapter,
             @Autowired final QueueUserRepository queueUserRepository,
-            @Autowired final InfoUserQueueRepository infoUserQueueRepository) {
+            @Autowired final InfoUserQueueRepository infoUserQueueRepository,
+            @Autowired final ActivePeriodRepository activePeriodRepository) {
         this.queueRepository = queueRepository;
         this.queueAdapter = queueAdapter;
         this.queueUserRepository = queueUserRepository;
         this.infoUserQueueRepository = infoUserQueueRepository;
+        this.activePeriodRepository = activePeriodRepository;
     }
 
     @Override
@@ -171,6 +178,25 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         queue.setIsLocked(false);
         queueDB = queueAdapter.queueToQueueDB(queue);
         queueRepository.save(queueDB);
+
+        return queueAdapter.queueDBToQueue(queueDB);
+    }
+
+    @Override
+    public Queue closeQueue(Queue queue) {
+        QueueDB queueDB;
+
+        //Set date finished in queue and saved it
+        Timestamp timestamp = new Timestamp(new Date().getTime());
+        queue.setDateFinished(timestamp);
+        queueDB = queueAdapter.queueToQueueDB(queue);
+        queueRepository.save(queueDB);
+
+        //Se cierra tal cual se ha abierto, sin haberse pausado
+        ActivePeriodDB activePeriodDB = new ActivePeriodDB(queue.getId(), queue.getDateCreated(), timestamp);
+        activePeriodRepository.save(activePeriodDB);
+
+        
 
         return queueAdapter.queueDBToQueue(queueDB);
     }
