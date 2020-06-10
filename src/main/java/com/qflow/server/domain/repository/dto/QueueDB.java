@@ -83,6 +83,10 @@ public class QueueDB {
         return dateFinished;
     }
 
+    public void setLocked(Boolean locked) {
+        isLocked = locked;
+    }
+
     public QueueDB(Integer id,
                    String name,
                    String description,

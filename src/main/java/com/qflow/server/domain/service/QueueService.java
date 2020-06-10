@@ -162,22 +162,37 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
 
     @Override
     public Queue stopQueue(Queue queue) {
-        QueueDB queueDB;
+        QueueDB queueDB = queueAdapter.queueToQueueDB(queue);
+        Optional<ActivePeriodDB> activePeriodDB = activePeriodRepository.getLastTuple(queue.getId());
 
-        queue.setIsLocked(true);
-        queueDB = queueAdapter.queueToQueueDB(queue);
-        queueRepository.save(queueDB);
+        if(activePeriodDB.isPresent()) {
+            if(activePeriodDB.get().getDateDeactivation() == null) {
+                Timestamp timestamp = new Timestamp(new Date().getTime());
+                ActivePeriodDB activePeriodDB1 = activePeriodDB.get();
+                activePeriodDB1.setDateDeactivation(timestamp);
+                activePeriodRepository.save(activePeriodDB1);
 
+                queueDB.setLocked(true);
+                queueRepository.save(queueDB);
+            }
+        }
         return queueAdapter.queueDBToQueue(queueDB);
     }
 
     @Override
     public Queue resumeQueue(Queue queue) {
-        QueueDB queueDB;
+        QueueDB queueDB = queueAdapter.queueToQueueDB(queue);
+        Optional<ActivePeriodDB> activePeriodDB = activePeriodRepository.getLastTuple(queue.getId());
 
-        queue.setIsLocked(false);
-        queueDB = queueAdapter.queueToQueueDB(queue);
-        queueRepository.save(queueDB);
+        if(!activePeriodDB.isPresent() || activePeriodDB.get().getDateDeactivation() != null) {
+            Timestamp timestamp = new Timestamp(new Date().getTime());
+            ActivePeriodDB activePeriodDB1 = activePeriodDB.get();
+            activePeriodDB1.setDateActivation(timestamp);
+            activePeriodRepository.save(activePeriodDB1);
+
+            queueDB.setLocked(false);
+            queueRepository.save(queueDB);
+        }
 
         return queueAdapter.queueDBToQueue(queueDB);
     }
@@ -195,8 +210,6 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         //Se cierra tal cual se ha abierto, sin haberse pausado
         ActivePeriodDB activePeriodDB = new ActivePeriodDB(queue.getId(), queue.getDateCreated(), timestamp);
         activePeriodRepository.save(activePeriodDB);
-
-        
 
         return queueAdapter.queueDBToQueue(queueDB);
     }
