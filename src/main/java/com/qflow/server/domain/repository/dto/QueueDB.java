@@ -83,6 +83,10 @@ public class QueueDB {
         return dateFinished;
     }
 
+    public void setCurrentPos(Integer currentPos) {
+        this.currentPos = currentPos;
+    }
+
     public QueueDB(Integer id,
                    String name,
                    String description,
