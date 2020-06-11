@@ -87,6 +87,10 @@ public class QueueDB {
         isLocked = locked;
     }
 
+    public void setDateFinished(Timestamp dateFinished) {
+        this.dateFinished = dateFinished;
+    }
+
     public QueueDB(Integer id,
                    String name,
                    String description,

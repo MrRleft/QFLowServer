@@ -34,6 +34,13 @@ public class ActivePeriodDB {
         this.dateDeactivation = dateDeactivation;
     }
 
+    public ActivePeriodDB(Integer id, Integer idQueue, Timestamp dateActivation, Timestamp dateDeactivation) {
+        this.id = id;
+        this.idQueue = idQueue;
+        this.dateActivation = dateActivation;
+        this.dateDeactivation = dateDeactivation;
+    }
+
     public Integer getId() {
         return id;
     }

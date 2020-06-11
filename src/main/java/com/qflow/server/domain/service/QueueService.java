@@ -200,16 +200,23 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     @Override
     public Queue closeQueue(Queue queue) {
         QueueDB queueDB;
-
-        //Set date finished in queue and saved it
+        Optional<ActivePeriodDB> activePeriodDB = activePeriodRepository.getLastTuple(queue.getId());
         Timestamp timestamp = new Timestamp(new Date().getTime());
-        queue.setDateFinished(timestamp);
-        queueDB = queueAdapter.queueToQueueDB(queue);
-        queueRepository.save(queueDB);
 
-        //Se cierra tal cual se ha abierto, sin haberse pausado
-        ActivePeriodDB activePeriodDB = new ActivePeriodDB(queue.getId(), queue.getDateCreated(), timestamp);
-        activePeriodRepository.save(activePeriodDB);
+        if(activePeriodDB.isPresent()) {
+            if(activePeriodDB.get().getDateDeactivation() == null) {
+                //Se cierra tal cual se ha abierto, sin haberse pausado
+                ActivePeriodDB activePeriodDB1 = activePeriodDB.get();
+                activePeriodDB1.setDateDeactivation(timestamp);
+                activePeriodRepository.save(activePeriodDB1);
+            }
+
+        }
+
+        queueDB = queueAdapter.queueToQueueDB(queue);
+        queueDB.setLocked(true);
+        queueDB.setDateFinished(timestamp);
+        queueRepository.save(queueDB);
 
         return queueAdapter.queueDBToQueue(queueDB);
     }
