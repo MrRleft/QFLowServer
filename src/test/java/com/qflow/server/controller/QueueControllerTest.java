@@ -59,6 +59,9 @@ public class QueueControllerTest {
     private ResumeQueue resumeQueue;
 
     @MockBean
+    private AdvanceQueue advanceQueue;
+
+    @MockBean
     private UserService userService;
     private final QueueAdapter queueAdapter = new QueueAdapter();
 
@@ -67,6 +70,7 @@ public class QueueControllerTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
 
     @BeforeEach
     void setUp(){
@@ -256,6 +260,45 @@ public class QueueControllerTest {
         final ResponseEntity response =
                 this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/resumeQueue/1", this.port),
                         HttpMethod.GET,
+                        new HttpEntity<>(new HttpHeaders()),
+                        String.class,
+                        new Object());
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((String) response.getBody()).contains("1"));
+    }
+
+    @Test
+    void advanceQueue_queue() {
+        Instant instant = Instant.now();
+        Timestamp.from(instant);
+        Queue queueToResume = Queue.QueueBuilder.aQueue()
+                .withId(10)
+                .withJoinId(222)
+                .withBusinessAssociated("sony")
+                .withCapacity(100)
+                .withDescription("mala")
+                .withName("pepe")
+                .withCurrentPos(1)
+                .withDateCreated(Timestamp.from(instant))
+                .withDateFinished(Timestamp.from(instant))
+                .withIsLock(true)
+                .build();
+
+        Mockito.when(this.advanceQueue.execute(1, "1")).thenReturn(queueToResume);
+
+        TestRestTemplate restTemplate = new TestRestTemplate();
+        restTemplate.getRestTemplate().setInterceptors(
+                Collections.singletonList((request, body, execution) -> {
+                    request.getHeaders().add("token", "1");
+                    return execution.execute(request, body);
+                }));
+
+        final ResponseEntity response =
+                restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/advanceQueue/1", this.port),
+                        HttpMethod.POST,
                         new HttpEntity<>(new HttpHeaders()),
                         String.class,
                         new Object());

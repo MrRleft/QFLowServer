@@ -6,9 +6,9 @@ import com.qflow.server.usecase.users.GetUserByToken;
 
 public class AdvanceQueue {
 
-    private AdvanceQueueDatabase advanceQueueDatabase;
-    private GetQueueByQueueId getQueueByQueueId;
-    private GetUserByToken getUserByToken;
+    private final AdvanceQueueDatabase advanceQueueDatabase;
+    private final GetQueueByQueueId getQueueByQueueId;
+    private final GetUserByToken getUserByToken;
 
     public AdvanceQueue(AdvanceQueueDatabase advanceQueueDatabase,
                         GetQueueByQueueId getQueuesByUserId,

@@ -203,12 +203,3 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
 
     }
 }
-
-
-/*if(expand.equals("all")) {
-                if (locked == null) {   //All queues from DB
-                    queueDBListOptional = queueRepository.getAllQueues();
-                } else{     //All queues from DB by locked status
-                    queueDBListOptional = queueRepository.getQueuesByLocked(locked);
-                }
-            }else */
