@@ -66,14 +66,14 @@ public class QueueServiceTest {
         Instant instant = Instant.now();
         queueDBMock = new QueueDB(1, "ExampleNotFinished", "desc",
                 "buss", 1, 20, 1, false,
-                Timestamp.from(instant), null);
+                Timestamp.from(instant), null, 3);
 
         queueDBListMock = new ArrayList<>();
         queueDBListMock.add(queueDBMock);
 
         QueueDB queueDBMockFinished1 = new QueueDB(2, "ExampleFinished1", "desc",
                 "buss", 2, 20, 1, false,
-                Timestamp.from(instant), Timestamp.from(instant));
+                Timestamp.from(instant), Timestamp.from(instant), 3);
 
         queueDBFinishedListMock = new ArrayList<>();
         queueDBFinishedListMock.add(queueDBMockFinished1);
@@ -176,7 +176,9 @@ public class QueueServiceTest {
     void createQueue_queueAlreadyExists_queue() {
         Queue queueToCreate = Queue.QueueBuilder.aQueue()
                 .withJoinId(1133).build();
-        QueueDB queueDB = new QueueDB();
+        QueueDB queueDB = new QueueDB(1, "ExampleNotFinished", "desc",
+                "buss", 1, 20, 1, true,
+                null, null, 3);
         //QueueUserDB queueUserDB = new QueueUserDB();
         Mockito.when(queueRepository.findQueueByJoinId(1133)).thenReturn(Optional.of(queueDB));
         //Mockito.when(queueUserRepository.save(queueUserDBMock)).thenReturn(Optional.of());
@@ -291,7 +293,7 @@ public class QueueServiceTest {
     void advanceQueue_QueueIdLocked_ThrowsExc() {
         QueueDB queue = new QueueDB(1, "ExampleNotFinished", "desc",
                 "buss", 1, 20, 1, true,
-                null, null);
+                null, null, 3);
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.of(queue));
 
         assertThrows(QueueLockedException.class, () -> queueService.advanceQueue(1, 1));

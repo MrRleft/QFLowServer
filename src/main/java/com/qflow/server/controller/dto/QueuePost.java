@@ -4,12 +4,12 @@ import java.sql.Timestamp;
 
 public class QueuePost {
     //TODO this class represents what the app sends the service when creating a Queue
-    //TODO add builder (download plugin to create builders (remember to create innerbuild))
 
     private String name;
     private String description;
     private int capacity;
     private String businessAssociated;
+    private int estimatedTime;
 
     public String getName() {
         return name;
@@ -27,17 +27,22 @@ public class QueuePost {
         return businessAssociated;
     }
 
+    public int getEstimatedTime() {
+        return estimatedTime;
+    }
+
 
     public static final class QueuePostBuilder {
         private String name;
         private String description;
         private int capacity;
         private String businessAssociated;
+        private int estimatedTime;
 
         private QueuePostBuilder() {
         }
 
-        public static QueuePostBuilder aQueuePost() {
+        public static QueuePostBuilder QueuePost() {
             return new QueuePostBuilder();
         }
 
@@ -61,11 +66,17 @@ public class QueuePost {
             return this;
         }
 
+        public QueuePostBuilder estimatedTime(int estimatedTime) {
+            this.estimatedTime = estimatedTime;
+            return this;
+        }
+
         public QueuePost build() {
             QueuePost queuePost = new QueuePost();
-            queuePost.description = this.description;
             queuePost.capacity = this.capacity;
             queuePost.name = this.name;
+            queuePost.estimatedTime = this.estimatedTime;
+            queuePost.description = this.description;
             queuePost.businessAssociated = this.businessAssociated;
             return queuePost;
         }
