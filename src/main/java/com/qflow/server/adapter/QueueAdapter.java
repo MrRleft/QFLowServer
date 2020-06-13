@@ -35,7 +35,6 @@ public class QueueAdapter {
                 .withCapacity(queuePost.getCapacity())
                 .withDescription(queuePost.getDescription())
                 .withName(queuePost.getName())
-                .withEstimatedTime(queuePost.getEstimatedTime())
                 .build();
     }
 

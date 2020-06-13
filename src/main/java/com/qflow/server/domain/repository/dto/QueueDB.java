@@ -43,9 +43,6 @@ public class QueueDB {
     @Column(name = "date_finished")
     private Timestamp dateFinished;
 
-    @Column(name = "estimated_time")
-    private int estimatedTime;
-
     public Integer getId() {
         return id;
     }
@@ -90,17 +87,16 @@ public class QueueDB {
         this.currentPos = currentPos;
     }
 
-    public int getEstimatedTime() {
-        return estimatedTime;
-    }
-
-    public void setEstimatedTime(int estimatedTime) {
-        this.estimatedTime = estimatedTime;
-    }
-
-    public QueueDB(Integer id, String name, String description, String businessAssociated, int joinId, Integer capacity,
-                   Integer currentPos, Boolean isLocked, Timestamp dateCreated, Timestamp dateFinished,
-                   int estimatedTime) {
+    public QueueDB(Integer id,
+                   String name,
+                   String description,
+                   String businessAssociated,
+                   int joinId,
+                   Integer capacity,
+                   Integer currentPos,
+                   Boolean isLocked,
+                   Timestamp dateCreated,
+                   Timestamp dateFinished) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -111,7 +107,9 @@ public class QueueDB {
         this.isLocked = isLocked;
         this.dateCreated = dateCreated;
         this.dateFinished = dateFinished;
-        this.estimatedTime = estimatedTime;
+    }
+
+    public QueueDB() {
     }
 
 
@@ -126,7 +124,6 @@ public class QueueDB {
         private Boolean isLocked;
         private Timestamp dateCreated;
         private Timestamp dateFinished;
-        private int estimatedTime;
 
         private QueueDBBuilder() {
         }
@@ -185,14 +182,19 @@ public class QueueDB {
             return this;
         }
 
-        public QueueDBBuilder withEstimatedTime(int estimatedTime) {
-            this.estimatedTime = estimatedTime;
-            return this;
-        }
-
         public QueueDB build() {
-            return new QueueDB(id, name, description, businessAssociated, joinId, capacity,
-                    currentPos, isLocked, dateCreated, dateFinished, estimatedTime);
+            QueueDB queueDB = new QueueDB();
+            queueDB.name = this.name;
+            queueDB.capacity = this.capacity;
+            queueDB.id = this.id;
+            queueDB.description = this.description;
+            queueDB.dateCreated = this.dateCreated;
+            queueDB.dateFinished = this.dateFinished;
+            queueDB.isLocked = this.isLocked;
+            queueDB.joinId = this.joinId;
+            queueDB.currentPos = this.currentPos;
+            queueDB.businessAssociated = this.businessAssociated;
+            return queueDB;
         }
     }
 }
