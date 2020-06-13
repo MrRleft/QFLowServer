@@ -43,6 +43,25 @@ public class QueueDB {
     @Column(name = "date_finished")
     private Timestamp dateFinished;
 
+    @Column(name = "avg_service_time")
+    private Integer avgServiceTime;
+
+    public QueueDB(Integer id, String name, String description, String businessAssociated, int joinId, Integer capacity, Integer currentPos, Boolean isLocked, Timestamp dateCreated, Timestamp dateFinished, Integer avgServiceTime) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.businessAssociated = businessAssociated;
+        this.joinId = joinId;
+        this.capacity = capacity;
+        this.currentPos = currentPos;
+        this.isLocked = isLocked;
+        this.dateCreated = dateCreated;
+        this.dateFinished = dateFinished;
+        this.avgServiceTime = avgServiceTime;
+    }
+
+    public QueueDB() { }
+
     public Integer getId() {
         return id;
     }
@@ -83,29 +102,52 @@ public class QueueDB {
         return dateFinished;
     }
 
-    public QueueDB(Integer id,
-                   String name,
-                   String description,
-                   String businessAssociated,
-                   int joinId,
-                   Integer capacity,
-                   Integer currentPos,
-                   Boolean isLocked,
-                   Timestamp dateCreated,
-                   Timestamp dateFinished) {
+    public Integer getAvgServiceTime() {
+        return avgServiceTime;
+    }
+
+    public void setId(Integer id) {
         this.id = id;
+    }
+
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setBusinessAssociated(String businessAssociated) {
         this.businessAssociated = businessAssociated;
+    }
+
+    public void setJoinId(int joinId) {
         this.joinId = joinId;
+    }
+
+    public void setCapacity(Integer capacity) {
         this.capacity = capacity;
+    }
+
+    public void setCurrentPos(Integer currentPos) {
         this.currentPos = currentPos;
-        this.isLocked = isLocked;
+    }
+
+    public void setLocked(Boolean locked) {
+        isLocked = locked;
+    }
+
+    public void setDateCreated(Timestamp dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    public void setDateFinished(Timestamp dateFinished) {
         this.dateFinished = dateFinished;
     }
 
-    public QueueDB() {
+    public void setAvgServiceTime(Integer avgServiceTime) {
+        this.avgServiceTime = avgServiceTime;
     }
 
 
@@ -120,6 +162,7 @@ public class QueueDB {
         private Boolean isLocked;
         private Timestamp dateCreated;
         private Timestamp dateFinished;
+        private Integer avgServiceTime;
 
         private QueueDBBuilder() {
         }
@@ -178,19 +221,13 @@ public class QueueDB {
             return this;
         }
 
+        public QueueDBBuilder withAvgServiceTime(Integer avgServiceTime) {
+            this.avgServiceTime = avgServiceTime;
+            return this;
+        }
+
         public QueueDB build() {
-            QueueDB queueDB = new QueueDB();
-            queueDB.name = this.name;
-            queueDB.capacity = this.capacity;
-            queueDB.id = this.id;
-            queueDB.description = this.description;
-            queueDB.dateCreated = this.dateCreated;
-            queueDB.dateFinished = this.dateFinished;
-            queueDB.isLocked = this.isLocked;
-            queueDB.joinId = this.joinId;
-            queueDB.currentPos = this.currentPos;
-            queueDB.businessAssociated = this.businessAssociated;
-            return queueDB;
+            return new QueueDB(id, name, description, businessAssociated, joinId, capacity, currentPos, isLocked, dateCreated, dateFinished, avgServiceTime);
         }
     }
 }

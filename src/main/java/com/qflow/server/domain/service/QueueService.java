@@ -67,7 +67,11 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
             if(quDB.isPresent()) {
                 int posUser = quDB.get().getPosition();
                 int numPersons  = ret.getCurrentPos();
-                ret.setInFrontOfUser(quDB.get().getPosition() - ret.getCurrentPos());
+                int inFrontOfUser = quDB.get().getPosition() - ret.getCurrentPos();
+                int avgServiceTime = queueDB.getAvgServiceTime();
+
+                ret.setWaitingTimeForUser(avgServiceTime * inFrontOfUser);
+                ret.setInFrontOfUser(inFrontOfUser);
             }
             else
                 ret.setInFrontOfUser(-1);

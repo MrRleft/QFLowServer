@@ -19,6 +19,8 @@ public class Queue {
     private String businessAssociated;
     private int numPersons;
     private int inFrontOfUser;
+    private int avgServiceTime;
+    private int waitingTimeForUser;
 
     public Queue() {
     }
@@ -66,6 +68,14 @@ public class Queue {
     public int getNumPersons() { return numPersons; }
 
     public int getInFrontOfUser() { return inFrontOfUser; }
+
+    public int getAvgServiceTime() { return avgServiceTime; }
+
+    public int getWaitingTimeForUser() { return waitingTimeForUser; }
+
+    public void setWaitingTimeForUser(int waitingTimeForUser) { this.waitingTimeForUser = waitingTimeForUser; }
+
+    public void setAvgServiceTime(int avgServiceTime) { this.avgServiceTime = avgServiceTime; }
 
     public void setInFrontOfUser(int inFrontOfUser) { this.inFrontOfUser = inFrontOfUser; }
 
