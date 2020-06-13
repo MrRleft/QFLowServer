@@ -11,6 +11,7 @@ create table queue
     date_created        timestamp,
     capacity            integer,
     current_position    integer,
+    avg_service_time    integer,
     is_locked           boolean
 );
 
