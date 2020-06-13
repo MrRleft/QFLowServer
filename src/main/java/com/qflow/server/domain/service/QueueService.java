@@ -8,10 +8,9 @@ import com.qflow.server.domain.repository.dto.InfoUserQueueDB;
 import com.qflow.server.domain.repository.dto.QueueDB;
 import com.qflow.server.domain.repository.dto.QueueUserDB;
 import com.qflow.server.entity.Queue;
-import com.qflow.server.entity.exceptions.QueueFullException;
-import com.qflow.server.entity.exceptions.QueueNotFoundException;
-import com.qflow.server.entity.exceptions.UserAlreadyInQueue;
+import com.qflow.server.entity.exceptions.*;
 import com.qflow.server.usecase.queues.*;
+import io.micrometer.shaded.org.pcollections.PQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,7 @@ import java.util.*;
 
 @Service
 public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueIdDatabase, GetQueueByJoinIdDatabase,
-        CreateQueueDatabase, JoinQueueDatabase, StopQueueDataBase, ResumeQueueDataBase {
+        CreateQueueDatabase, JoinQueueDatabase, StopQueueDataBase, ResumeQueueDataBase, AdvanceQueueDatabase {
 
 
     final private QueueRepository queueRepository;
@@ -175,13 +174,32 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         return queueAdapter.queueDBToQueue(queueDB);
     }
 
+    @Override
+    public void advanceQueue(int idUser, int idQueue) {
+
+        Optional<QueueDB> queueDB = queueRepository.findById(idQueue);
+        if(!queueDB.isPresent())
+            throw new QueueNotFoundException("Queue with id: " + idQueue + " not found");
+        if(queueDB.get().getLocked())
+            throw new QueueLockedException("Queue with id: " + idQueue + " is locked");
+
+        Optional<InfoUserQueueDB> infoUserQueueDB = infoUserQueueRepository.getUserInInfoUserQueue(idUser, idQueue);
+        Optional<QueueUserDB> queueUserDB = queueUserRepository.getUserInQueue(idUser, idQueue);
+        if(!infoUserQueueDB.isPresent() || !queueUserDB.isPresent() || !queueUserDB.get().getActive())
+            throw new UserNotInQueueException("User with id " + idUser + " not in queue " + idQueue );
+
+        updateDataAdvanceQueue(queueDB.get(), infoUserQueueDB.get(), queueUserDB.get());
+
+    }
+
+    private void updateDataAdvanceQueue(QueueDB queueDB, InfoUserQueueDB infoUserQueueDB, QueueUserDB queueUserDB) {
+
+        queueDB.setCurrentPos(queueUserDB.getPosition()+1);
+        infoUserQueueDB.setUnattended(false);
+        infoUserQueueDB.setDateSuccess( new Timestamp(new Date().getTime()));
+        queueUserDB.setActive(false);
+        infoUserQueueRepository.save(infoUserQueueDB);
+        queueUserRepository.save(queueUserDB);
+
+    }
 }
-
-
-/*if(expand.equals("all")) {
-                if (locked == null) {   //All queues from DB
-                    queueDBListOptional = queueRepository.getAllQueues();
-                } else{     //All queues from DB by locked status
-                    queueDBListOptional = queueRepository.getQueuesByLocked(locked);
-                }
-            }else */
