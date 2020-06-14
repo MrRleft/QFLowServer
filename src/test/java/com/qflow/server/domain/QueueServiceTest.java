@@ -325,7 +325,7 @@ public class QueueServiceTest {
     void advanceQueue_QueueIdLocked_ThrowsExc() {
         QueueDB queue = new QueueDB(1, "ExampleNotFinished", "desc",
                 "buss", 1, 20, 1, true,
-                null, null);
+                null, null, 10);
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.of(queue));
 
         assertThrows(QueueLockedException.class, () -> queueService.advanceQueue(1, 1));
