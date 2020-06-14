@@ -26,6 +26,7 @@ public class QueuesController {
     private final StopQueue stopQueue;
     private final ResumeQueue resumeQueue;
 private final AdvanceQueue advanceQueue;
+    private final CloseQueue closeQueue;
 
     public QueuesController(@Autowired final GetQueuesByUserId getQueuesByUserId,
                             @Autowired final GetQueueByQueueId getQueueByQueueId,
@@ -35,6 +36,7 @@ private final AdvanceQueue advanceQueue;
                             @Autowired final QueueAdapter queueAdapter,
                             @Autowired final StopQueue stopQueue,
                             @Autowired final ResumeQueue resumeQueue,
+                            @Autowired final CloseQueue closeQueue,
                             @Autowired final AdvanceQueue advanceQueue) {
         this.getQueuesByUserId = getQueuesByUserId;
         this.getQueueByQueueId = getQueueByQueueId;
@@ -44,6 +46,7 @@ private final AdvanceQueue advanceQueue;
         this.queueAdapter = queueAdapter;
         this.stopQueue = stopQueue;
         this.resumeQueue = resumeQueue;
+        this.closeQueue = closeQueue;
         this.advanceQueue = advanceQueue;
     }
 
@@ -90,14 +93,14 @@ private final AdvanceQueue advanceQueue;
                 HttpStatus.OK);
     }
 
-    @GetMapping("/stopQueue/{idQueue}")
+    @PostMapping("/stopQueue/{idQueue}")
     public ResponseEntity<Queue> stopQueue(@PathVariable("idQueue")
                                                final int idQueue) {
         return new ResponseEntity<>(
                 this.stopQueue.execute(idQueue), HttpStatus.OK);
     }
 
-    @GetMapping("/resumeQueue/{idQueue}")
+    @PostMapping("/resumeQueue/{idQueue}")
     public ResponseEntity<Queue> resumeQueue(@PathVariable("idQueue")
                                            final int idQueue) {
         return new ResponseEntity<>(
@@ -109,6 +112,13 @@ private final AdvanceQueue advanceQueue;
                                                   @RequestHeader(value = "token") final String token) {
         return new ResponseEntity<>(
                 this.advanceQueue.execute(idQueue, token), HttpStatus.OK);
+    }
+
+    @PostMapping("/closeQueue/{idQueue}")
+    public ResponseEntity<Queue> closeQueue(@PathVariable("idQueue")
+                                             final int idQueue) {
+        return new ResponseEntity<>(
+                this.closeQueue.execute(idQueue), HttpStatus.OK);
     }
 }
 

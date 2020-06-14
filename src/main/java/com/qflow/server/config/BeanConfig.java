@@ -60,6 +60,11 @@ public class BeanConfig {
     }
 
     @Bean
+    public CloseQueue closeQueue(@Autowired QueueService queueService, @Autowired GetQueueByQueueId getQueueByQueueId) {
+        return new CloseQueue(queueService, getQueueByQueueId);
+    }
+
+    @Bean
     public AdvanceQueue advanceQueue(@Autowired QueueService queueService,
                                      @Autowired GetQueueByQueueId getQueueByQueueId,
                                      @Autowired GetUserByToken getUserByToken) {

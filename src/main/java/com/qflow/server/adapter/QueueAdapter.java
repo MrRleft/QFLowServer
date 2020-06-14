@@ -52,6 +52,7 @@ public class QueueAdapter {
                 .withIsLocked(queue.getLock())
                 .withJoinId(queue.getJoinId())
                 .withName(queue.getName())
+                .withAverageServiceTime(queue.getAvgServiceTime())
                 .build();
     }
 

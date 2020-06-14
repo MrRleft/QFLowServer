@@ -43,6 +43,10 @@ public class QueueDB {
     @Column(name = "date_finished")
     private Timestamp dateFinished;
 
+    @Column(name =  "avg_service_time",
+            length = 32)
+    private Integer averageServiceTime;
+
     public Integer getId() {
         return id;
     }
@@ -83,6 +87,18 @@ public class QueueDB {
         return dateFinished;
     }
 
+    public Integer getAverageServiceTime() {
+        return averageServiceTime;
+    }
+
+    public void setLocked(Boolean locked) {
+        isLocked = locked;
+    }
+
+    public void setDateFinished(Timestamp dateFinished) {
+        this.dateFinished = dateFinished;
+    }
+
     public void setCurrentPos(Integer currentPos) {
         this.currentPos = currentPos;
     }
@@ -96,7 +112,8 @@ public class QueueDB {
                    Integer currentPos,
                    Boolean isLocked,
                    Timestamp dateCreated,
-                   Timestamp dateFinished) {
+                   Timestamp dateFinished,
+                   Integer averageServiceTime) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -107,6 +124,7 @@ public class QueueDB {
         this.isLocked = isLocked;
         this.dateCreated = dateCreated;
         this.dateFinished = dateFinished;
+        this.averageServiceTime = averageServiceTime;
     }
 
     public QueueDB() {
@@ -124,6 +142,7 @@ public class QueueDB {
         private Boolean isLocked;
         private Timestamp dateCreated;
         private Timestamp dateFinished;
+        private Integer averageServiceTime;
 
         private QueueDBBuilder() {
         }
@@ -182,19 +201,13 @@ public class QueueDB {
             return this;
         }
 
+        public QueueDBBuilder withAverageServiceTime(Integer averageServiceTime) {
+            this.averageServiceTime = averageServiceTime;
+            return this;
+        }
+
         public QueueDB build() {
-            QueueDB queueDB = new QueueDB();
-            queueDB.name = this.name;
-            queueDB.capacity = this.capacity;
-            queueDB.id = this.id;
-            queueDB.description = this.description;
-            queueDB.dateCreated = this.dateCreated;
-            queueDB.dateFinished = this.dateFinished;
-            queueDB.isLocked = this.isLocked;
-            queueDB.joinId = this.joinId;
-            queueDB.currentPos = this.currentPos;
-            queueDB.businessAssociated = this.businessAssociated;
-            return queueDB;
+            return new QueueDB(id, name, description, businessAssociated, joinId, capacity, currentPos, isLocked, dateCreated, dateFinished, averageServiceTime);
         }
     }
 }
