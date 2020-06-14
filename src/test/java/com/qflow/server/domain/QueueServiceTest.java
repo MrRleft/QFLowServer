@@ -5,10 +5,7 @@ import com.qflow.server.domain.repository.ActivePeriodRepository;
 import com.qflow.server.domain.repository.InfoUserQueueRepository;
 import com.qflow.server.domain.repository.QueueRepository;
 import com.qflow.server.domain.repository.QueueUserRepository;
-import com.qflow.server.domain.repository.dto.InfoUserQueueDB;
-import com.qflow.server.domain.repository.dto.QueueDB;
-import com.qflow.server.domain.repository.dto.QueueUserDB;
-import com.qflow.server.domain.repository.dto.UserDB;
+import com.qflow.server.domain.repository.dto.*;
 import com.qflow.server.domain.service.QueueService;
 import com.qflow.server.entity.InfoUserQueue;
 import com.qflow.server.entity.Queue;
@@ -58,6 +55,8 @@ public class QueueServiceTest {
     @Mock
     private ActivePeriodRepository activePeriodRepo;
 
+    private ActivePeriodDB activePeriodDB;
+
     @Mock
     private InfoUserQueueRepository infoUserQueueRepository;
 
@@ -87,6 +86,7 @@ public class QueueServiceTest {
 
         queueUserDBMock = new QueueUserDB(1 ,1, 1, true, false, 10);
         infoUserQueueDB = new InfoUserQueueDB(1, 1);
+        activePeriodDB = new ActivePeriodDB(1, Timestamp.from(instant), null);
     }
 
     //----------------------------- GetQueuesByIdUser----------------------------------------------------------------
@@ -238,6 +238,31 @@ public class QueueServiceTest {
                 .withIsLock(true)
                 .build();
         queueService.resumeQueue(queueToResume);
+        Mockito.verify(queueRepository).save(Mockito.any());
+    }
+
+    @Test
+    void closeQueue_queue() {
+        Instant instant = Instant.now();
+        Timestamp.from(instant);
+        Queue queueToClose = Queue.QueueBuilder.aQueue()
+                .withId(10)
+                .withJoinId(222)
+                .withBusinessAssociated("sony")
+                .withCapacity(100)
+                .withDescription("mala")
+                .withName("pepe")
+                .withCurrentPos(1)
+                .withDateCreated(Timestamp.from(instant))
+                .withDateFinished(Timestamp.from(instant))
+                .withIsLock(false)
+                .withInFrontOfUser(10)
+                .withNumPersons(3)
+                .build();
+        Mockito.when(activePeriodRepo.getLastTuple(queueToClose.getId())).thenReturn(Optional.of(activePeriodDB));
+
+        queueService.closeQueue(queueToClose);
+        Mockito.verify(activePeriodRepo).save(Mockito.any());
         Mockito.verify(queueRepository).save(Mockito.any());
     }
 

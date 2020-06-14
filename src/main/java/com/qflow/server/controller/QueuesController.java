@@ -90,21 +90,21 @@ public class QueuesController {
                 HttpStatus.OK);
     }
 
-    @GetMapping("/stopQueue/{idQueue}")
+    @PostMapping("/stopQueue/{idQueue}")
     public ResponseEntity<Queue> stopQueue(@PathVariable("idQueue")
                                                final int idQueue) {
         return new ResponseEntity<>(
                 this.stopQueue.execute(idQueue), HttpStatus.OK);
     }
 
-    @GetMapping("/resumeQueue/{idQueue}")
+    @PostMapping("/resumeQueue/{idQueue}")
     public ResponseEntity<Queue> resumeQueue(@PathVariable("idQueue")
                                            final int idQueue) {
         return new ResponseEntity<>(
                 this.resumeQueue.execute(idQueue), HttpStatus.OK);
     }
 
-    @GetMapping("/closeQueue/{idQueue}")
+    @PostMapping("/closeQueue/{idQueue}")
     public ResponseEntity<Queue> closeQueue(@PathVariable("idQueue")
                                              final int idQueue) {
         return new ResponseEntity<>(

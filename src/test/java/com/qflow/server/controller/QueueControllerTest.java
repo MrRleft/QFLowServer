@@ -59,6 +59,9 @@ public class QueueControllerTest {
     private ResumeQueue resumeQueue;
 
     @MockBean
+    private CloseQueue closeQueue;
+
+    @MockBean
     private UserService userService;
     private final QueueAdapter queueAdapter = new QueueAdapter();
 
@@ -255,6 +258,38 @@ public class QueueControllerTest {
 
         final ResponseEntity response =
                 this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/resumeQueue/1", this.port),
+                        HttpMethod.GET,
+                        new HttpEntity<>(new HttpHeaders()),
+                        String.class,
+                        new Object());
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(((String) response.getBody()).contains("1"));
+    }
+
+    @Test
+    void closeQueue_queue() {
+        Instant instant = Instant.now();
+        Timestamp.from(instant);
+        Queue queueToClose = Queue.QueueBuilder.aQueue()
+                .withId(10)
+                .withJoinId(222)
+                .withBusinessAssociated("sony")
+                .withCapacity(100)
+                .withDescription("mala")
+                .withName("pepe")
+                .withCurrentPos(1)
+                .withDateCreated(Timestamp.from(instant))
+                .withDateFinished(Timestamp.from(instant))
+                .withIsLock(true)
+                .build();
+
+        Mockito.when(this.closeQueue.execute(1)).thenReturn(queueToClose);
+
+        final ResponseEntity response =
+                this.restTemplate.exchange(String.format("http://localhost:%d/qflow/queues/closeQueue/1", this.port),
                         HttpMethod.GET,
                         new HttpEntity<>(new HttpHeaders()),
                         String.class,

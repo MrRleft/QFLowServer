@@ -91,6 +91,7 @@ public class Queue {
         this.currentPos = i;
     }
 
+
     public static final class QueueBuilder {
         private int id;
         private String name;
@@ -102,6 +103,8 @@ public class Queue {
         private int currentPos;
         private Boolean isLock;
         private String businessAssociated;
+        private int numPersons;
+        private int inFrontOfUser;
 
         private QueueBuilder() {
         }
@@ -112,12 +115,6 @@ public class Queue {
 
         public QueueBuilder withId(int id) {
             this.id = id;
-            return this;
-        }
-
-        public QueueBuilder withBusinessAssociated(String businessAssociated)
-        {
-            this.businessAssociated = businessAssociated;
             return this;
         }
 
@@ -161,18 +158,35 @@ public class Queue {
             return this;
         }
 
+        public QueueBuilder withBusinessAssociated(String businessAssociated) {
+            this.businessAssociated = businessAssociated;
+            return this;
+        }
+
+        public QueueBuilder withNumPersons(int numPersons) {
+            this.numPersons = numPersons;
+            return this;
+        }
+
+        public QueueBuilder withInFrontOfUser(int inFrontOfUser) {
+            this.inFrontOfUser = inFrontOfUser;
+            return this;
+        }
+
         public Queue build() {
             Queue queue = new Queue();
+            queue.setJoinId(joinId);
+            queue.setDateCreated(dateCreated);
+            queue.setDateFinished(dateFinished);
+            queue.setCurrentPos(currentPos);
+            queue.setNumPersons(numPersons);
+            queue.setInFrontOfUser(inFrontOfUser);
+            queue.businessAssociated = this.businessAssociated;
             queue.name = this.name;
             queue.capacity = this.capacity;
+            queue.isLock = this.isLock;
             queue.id = this.id;
             queue.description = this.description;
-            queue.dateCreated = this.dateCreated;
-            queue.dateFinished = this.dateFinished;
-            queue.isLock = this.isLock;
-            queue.joinId = this.joinId;
-            queue.currentPos = this.currentPos;
-            queue.businessAssociated = this.businessAssociated;
             return queue;
         }
     }
