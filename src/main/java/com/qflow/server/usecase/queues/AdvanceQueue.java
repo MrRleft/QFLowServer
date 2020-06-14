@@ -20,7 +20,7 @@ public class AdvanceQueue {
 
     public Queue execute(int id, String token){
         User user = this.getUserByToken.execute(token);
-        advanceQueueDatabase.advanceQueue(id, user.getId());
+        advanceQueueDatabase.advanceQueue(user.getId(), id);
         return getQueueByQueueId.execute(id);
     }
 }
