@@ -89,7 +89,8 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         if(!queueDBOptional.isPresent()){
             throw new QueueNotFoundException("Queue with id: " + idQueue + " not found");
         }
-        Queue ret = queueAdapter.queueDBToQueue(queueDBOptional.get());
+        QueueDB qDB = queueDBOptional.get();
+        Queue ret = queueAdapter.queueDBToQueue(qDB);
 
         ret.setNumPersons(queueUserRepository.numPersonsInQueue(idQueue));
         return ret;
@@ -122,7 +123,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
             queue.setJoinId(rnd);
             Timestamp timestamp = new Timestamp(new Date().getTime());
             queue.setDateCreated(timestamp);
-            queue.setIsLocked(true);
+            queue.setLock(true);
             queue.setCurrentPos(1);
             queue.setNumPersons(0);
             QueueDB aux = queueRepository.save(queueAdapter.queueToQueueDB(queue));
@@ -161,7 +162,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     public Queue stopQueue(Queue queue) {
         QueueDB queueDB;
 
-        queue.setIsLocked(true);
+        queue.setLock(true);
         queueDB = queueAdapter.queueToQueueDB(queue);
         queueRepository.save(queueDB);
 
@@ -172,7 +173,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
     public Queue resumeQueue(Queue queue) {
         QueueDB queueDB;
 
-        queue.setIsLocked(false);
+        queue.setLock(false);
         queueDB = queueAdapter.queueToQueueDB(queue);
         queueRepository.save(queueDB);
 

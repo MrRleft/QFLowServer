@@ -37,11 +37,11 @@ public class QueueServiceTest {
     @Mock
     private QueueRepository queueRepository;
 
-    @Mock
     private QueueAdapter queueAdapter = new QueueAdapter();
 
     private QueueService queueService;
 
+    @Mock
     private QueueDB queueDBMock;
 
     private List<QueueDB> queueDBListMock;
@@ -69,14 +69,14 @@ public class QueueServiceTest {
         Instant instant = Instant.now();
         queueDBMock = new QueueDB(1, "ExampleNotFinished", "desc",
                 "buss", 1, 20,1,false,
-                Timestamp.from(instant), null);
+                Timestamp.from(instant) , null, 5);
 
         queueDBListMock = new ArrayList<>();
         queueDBListMock.add(queueDBMock);
 
         QueueDB queueDBMockFinished1 = new QueueDB(2, "ExampleFinished1", "desc",
                 "buss", 2, 20,1,false,
-                Timestamp.from(instant), Timestamp.from(instant));
+                Timestamp.from(instant), Timestamp.from(instant), 5);
 
         queueDBFinishedListMock = new ArrayList<>();
         queueDBFinishedListMock.add(queueDBMockFinished1);

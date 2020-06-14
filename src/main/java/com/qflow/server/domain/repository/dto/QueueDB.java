@@ -46,6 +46,9 @@ public class QueueDB {
     @Column(name = "avg_service_time")
     private Integer avgServiceTime;
 
+    public QueueDB() {
+    }
+
     public QueueDB(Integer id, String name, String description, String businessAssociated, int joinId, Integer capacity, Integer currentPos, Boolean isLocked, Timestamp dateCreated, Timestamp dateFinished, Integer avgServiceTime) {
         this.id = id;
         this.name = name;
@@ -59,8 +62,6 @@ public class QueueDB {
         this.dateFinished = dateFinished;
         this.avgServiceTime = avgServiceTime;
     }
-
-    public QueueDB() { }
 
     public Integer getId() {
         return id;
