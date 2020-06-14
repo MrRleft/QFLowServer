@@ -19,8 +19,27 @@ public class Queue {
     private String businessAssociated;
     private int numPersons;
     private int inFrontOfUser;
+    private int avgServiceTime;
+    private int waitingTimeForUser;
 
     public Queue() {
+    }
+
+    public Queue(int id, String name, String description, int joinId, Timestamp dateCreated, Timestamp dateFinished, int capacity, int currentPos, Boolean isLock, String businessAssociated, int numPersons, int inFrontOfUser, int avgServiceTime, int waitingTimeForUser) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.joinId = joinId;
+        this.dateCreated = dateCreated;
+        this.dateFinished = dateFinished;
+        this.capacity = capacity;
+        this.currentPos = currentPos;
+        this.isLock = isLock;
+        this.businessAssociated = businessAssociated;
+        this.numPersons = numPersons;
+        this.inFrontOfUser = inFrontOfUser;
+        this.avgServiceTime = avgServiceTime;
+        this.waitingTimeForUser = waitingTimeForUser;
     }
 
     public int getId() {
@@ -63,32 +82,76 @@ public class Queue {
         return businessAssociated;
     }
 
-    public int getNumPersons() { return numPersons; }
-
-    public int getInFrontOfUser() { return inFrontOfUser; }
-
-    public void setInFrontOfUser(int inFrontOfUser) { this.inFrontOfUser = inFrontOfUser; }
-
-    public void setNumPersons(int numPersons) { this.numPersons = numPersons; }
-
-    public void setJoinId(Integer rnd) {
-        this.joinId = rnd;
+    public int getNumPersons() {
+        return numPersons;
     }
 
-    public void setDateCreated(Timestamp timestamp) {
-        this.dateCreated = timestamp;
+    public int getInFrontOfUser() {
+        return inFrontOfUser;
     }
 
-    public void setDateFinished(Timestamp timestamp) {
-        this.dateFinished = timestamp;
+    public int getAvgServiceTime() {
+        return avgServiceTime;
     }
 
-    public void setIsLocked(boolean b) {
-        this.isLock = b;
+    public int getWaitingTimeForUser() {
+        return waitingTimeForUser;
     }
 
-    public void setCurrentPos(int i) {
-        this.currentPos = i;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setJoinId(int joinId) {
+        this.joinId = joinId;
+    }
+
+    public void setDateCreated(Timestamp dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public void setDateFinished(Timestamp dateFinished) {
+        this.dateFinished = dateFinished;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public void setCurrentPos(int currentPos) {
+        this.currentPos = currentPos;
+    }
+
+    public void setLock(Boolean lock) {
+        isLock = lock;
+    }
+
+    public void setBusinessAssociated(String businessAssociated) {
+        this.businessAssociated = businessAssociated;
+    }
+
+    public void setNumPersons(int numPersons) {
+        this.numPersons = numPersons;
+    }
+
+    public void setInFrontOfUser(int inFrontOfUser) {
+        this.inFrontOfUser = inFrontOfUser;
+    }
+
+    public void setAvgServiceTime(int avgServiceTime) {
+        this.avgServiceTime = avgServiceTime;
+    }
+
+    public void setWaitingTimeForUser(int waitingTimeForUser) {
+        this.waitingTimeForUser = waitingTimeForUser;
     }
 
 
@@ -105,9 +168,10 @@ public class Queue {
         private String businessAssociated;
         private int numPersons;
         private int inFrontOfUser;
+        private int avgServiceTime;
+        private int waitingTimeForUser;
 
-        private QueueBuilder() {
-        }
+
 
         public static QueueBuilder aQueue() {
             return new QueueBuilder();
@@ -173,21 +237,18 @@ public class Queue {
             return this;
         }
 
+        public QueueBuilder withAvgServiceTime(int avgServiceTime) {
+            this.avgServiceTime = avgServiceTime;
+            return this;
+        }
+
+        public QueueBuilder withWaitingTimeForUser(int waitingTimeForUser) {
+            this.waitingTimeForUser = waitingTimeForUser;
+            return this;
+        }
+
         public Queue build() {
-            Queue queue = new Queue();
-            queue.setJoinId(joinId);
-            queue.setDateCreated(dateCreated);
-            queue.setDateFinished(dateFinished);
-            queue.setCurrentPos(currentPos);
-            queue.setNumPersons(numPersons);
-            queue.setInFrontOfUser(inFrontOfUser);
-            queue.businessAssociated = this.businessAssociated;
-            queue.name = this.name;
-            queue.capacity = this.capacity;
-            queue.isLock = this.isLock;
-            queue.id = this.id;
-            queue.description = this.description;
-            return queue;
+            return new Queue(id, name, description, joinId, dateCreated, dateFinished, capacity, currentPos, isLock, businessAssociated, numPersons, inFrontOfUser, avgServiceTime, waitingTimeForUser);
         }
     }
 }

@@ -125,7 +125,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
             queue.setJoinId(rnd);
             Timestamp timestamp = new Timestamp(new Date().getTime());
             queue.setDateCreated(timestamp);
-            queue.setIsLocked(true);
+            queue.setLock(true);
             queue.setCurrentPos(1);
             queue.setNumPersons(0);
             QueueDB aux = queueRepository.save(queueAdapter.queueToQueueDB(queue));
@@ -184,7 +184,15 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         QueueDB queueDB = queueAdapter.queueToQueueDB(queue);
         Optional<ActivePeriodDB> activePeriodDB = activePeriodRepository.getLastTuple(queue.getId());
 
-        if(!activePeriodDB.isPresent() || activePeriodDB.get().getDateDeactivation() != null) {
+        if(!activePeriodDB.isPresent()) {
+            Timestamp timestamp = new Timestamp(new Date().getTime());
+            ActivePeriodDB activePeriodDB1 = new ActivePeriodDB(queue.getId(), timestamp,null);
+            activePeriodRepository.save(activePeriodDB1);
+
+            queueDB.setLocked(false);
+            queueRepository.save(queueDB);
+        }
+        else if(activePeriodDB.get().getDateDeactivation() != null) {
             Timestamp timestamp = new Timestamp(new Date().getTime());
             ActivePeriodDB activePeriodDB1 = activePeriodDB.get();
             activePeriodDB1.setDateActivation(timestamp);

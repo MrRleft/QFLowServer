@@ -35,7 +35,6 @@ public class QueueServiceTest {
     @Mock
     private QueueRepository queueRepository;
 
-    @Mock
     private QueueAdapter queueAdapter = new QueueAdapter();
 
     private QueueService queueService;
@@ -72,14 +71,14 @@ public class QueueServiceTest {
         Instant instant = Instant.now();
         queueDBMock = new QueueDB(1, "ExampleNotFinished", "desc",
                 "buss", 1, 20,1,false,
-                Timestamp.from(instant), null);
+                Timestamp.from(instant), null, 10);
 
         queueDBListMock = new ArrayList<>();
         queueDBListMock.add(queueDBMock);
 
         QueueDB queueDBMockFinished1 = new QueueDB(2, "ExampleFinished1", "desc",
                 "buss", 2, 20,1,false,
-                Timestamp.from(instant), Timestamp.from(instant));
+                Timestamp.from(instant), Timestamp.from(instant), 10);
 
         queueDBFinishedListMock = new ArrayList<>();
         queueDBFinishedListMock.add(queueDBMockFinished1);
@@ -217,7 +216,10 @@ public class QueueServiceTest {
                 .withDateFinished(Timestamp.from(instant))
                 .withIsLock(false)
                 .build();
+
+        Mockito.when(activePeriodRepo.getLastTuple(queueToStop.getId())).thenReturn(Optional.of(activePeriodDB));
         queueService.stopQueue(queueToStop);
+        Mockito.verify(activePeriodRepo).save(Mockito.any());
         Mockito.verify(queueRepository).save(Mockito.any());
     }
 
@@ -237,14 +239,16 @@ public class QueueServiceTest {
                 .withDateFinished(Timestamp.from(instant))
                 .withIsLock(true)
                 .build();
+
+        Mockito.when(activePeriodRepo.getLastTuple(queueToResume.getId())).thenReturn(Optional.empty());
         queueService.resumeQueue(queueToResume);
+        Mockito.verify(activePeriodRepo).save(Mockito.any());
         Mockito.verify(queueRepository).save(Mockito.any());
     }
 
     @Test
     void closeQueue_queue() {
         Instant instant = Instant.now();
-        Timestamp.from(instant);
         Queue queueToClose = Queue.QueueBuilder.aQueue()
                 .withId(10)
                 .withJoinId(222)
@@ -258,9 +262,10 @@ public class QueueServiceTest {
                 .withIsLock(false)
                 .withInFrontOfUser(10)
                 .withNumPersons(3)
+                .withAvgServiceTime(100)
                 .build();
         Mockito.when(activePeriodRepo.getLastTuple(queueToClose.getId())).thenReturn(Optional.of(activePeriodDB));
-
+        queueAdapter.queueToQueueDB(queueToClose);
         queueService.closeQueue(queueToClose);
         Mockito.verify(activePeriodRepo).save(Mockito.any());
         Mockito.verify(queueRepository).save(Mockito.any());
