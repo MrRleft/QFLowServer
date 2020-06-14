@@ -81,6 +81,14 @@ public class InfoUserQueueDB {
         return unattended;
     }
 
+    public void setDateSuccess(Timestamp dateSuccess) {
+        this.dateSuccess = dateSuccess;
+    }
+
+    public void setUnattended(Boolean unattended) {
+        this.unattended = unattended;
+    }
+
     public static final class InfoUserQueueDBBuilder {
         private Integer id;
         private Integer idQueue;
