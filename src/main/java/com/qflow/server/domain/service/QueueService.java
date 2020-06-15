@@ -65,8 +65,6 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
 
             Optional<QueueUserDB> quDB = queueUserRepository.getUserInQueue(idUser, ret.getId());
             if(quDB.isPresent()) {
-                int posUser = quDB.get().getPosition();
-                int numPersons  = ret.getCurrentPos();
                 int inFrontOfUser = quDB.get().getPosition() - ret.getCurrentPos();
                 int avgServiceTime = queueDB.getAvgServiceTime();
 

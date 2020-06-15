@@ -105,7 +105,8 @@ public class QueueServiceTest {
 
         List<Queue> res = queueService.getQueuesByUserId(null , 1, true);
         assertEquals(res.get(0).getName(), "ExampleFinished1");
-        assertEquals(4, res.get(0).getInFrontOfUser());
+        assertEquals(9, res.get(0).getInFrontOfUser());
+        assertEquals(45, res.get(0).getWaitingTimeForUser());
         assertEquals(res.get(0).getNumPersons(), 1);
     }
 
@@ -116,7 +117,8 @@ public class QueueServiceTest {
 
         List<Queue> res = queueService.getQueuesByUserId(null , 1, false);
         assertEquals(res.get(0).getName(), "ExampleNotFinished");
-        assertEquals(4, res.get(0).getInFrontOfUser());
+        assertEquals(9, res.get(0).getInFrontOfUser());
+        assertEquals(45, res.get(0).getWaitingTimeForUser());
         assertEquals(res.get(0).getNumPersons(), 1);
     }
 
@@ -127,7 +129,8 @@ public class QueueServiceTest {
 
         List<Queue> res = queueService.getQueuesByUserId("alluser", 1, null);
         assertEquals(res.get(0).getName(), "ExampleNotFinished");
-        assertEquals(4, res.get(0).getInFrontOfUser());
+        assertEquals(9, res.get(0).getInFrontOfUser());
+        assertEquals(45, res.get(0).getWaitingTimeForUser());
         assertEquals(res.get(0).getNumPersons(), 1);
     }
 
@@ -174,17 +177,6 @@ public class QueueServiceTest {
     void getQueueById_queueIdNotExists_Exception(){
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.empty());
         assertThrows(QueueNotFoundException.class, () -> this.queueService.getQueueByQueueId(1));
-    }
-
-    @Test
-    void createQueue_queueAlreadyExists_queue() {
-        Queue queueToCreate = Queue.QueueBuilder.aQueue()
-                                .withJoinId(1133).build();
-        QueueDB queueDB = new QueueDB();
-        //QueueUserDB queueUserDB = new QueueUserDB();
-        Mockito.when(queueRepository.findQueueByJoinId(1133)).thenReturn(Optional.of(queueDB));
-        //Mockito.when(queueUserRepository.save(queueUserDBMock)).thenReturn(Optional.of());
-        assertThrows(QueueuAlreadyExistsException.class, () -> this.queueService.createQueue(queueToCreate, 1));
     }
 
     @Test
