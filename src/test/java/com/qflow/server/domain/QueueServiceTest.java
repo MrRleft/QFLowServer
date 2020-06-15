@@ -36,6 +36,7 @@ public class QueueServiceTest {
 
     private QueueService queueService;
 
+    @Mock
     private QueueDB queueDBMock;
 
     private List<QueueDB> queueDBListMock;
@@ -68,14 +69,14 @@ public class QueueServiceTest {
         Instant instant = Instant.now();
         queueDBMock = new QueueDB(1, "ExampleNotFinished", "desc",
                 "buss", 1, 20,1,false,
-                Timestamp.from(instant), null, 10);
+                Timestamp.from(instant) , null, 5);
 
         queueDBListMock = new ArrayList<>();
         queueDBListMock.add(queueDBMock);
 
         QueueDB queueDBMockFinished1 = new QueueDB(2, "ExampleFinished1", "desc",
                 "buss", 2, 20,1,false,
-                Timestamp.from(instant), Timestamp.from(instant), 10);
+                Timestamp.from(instant), Timestamp.from(instant), 5);
 
         queueDBFinishedListMock = new ArrayList<>();
         queueDBFinishedListMock.add(queueDBMockFinished1);
@@ -94,8 +95,8 @@ public class QueueServiceTest {
 
         List<Queue> res = queueService.getQueuesByUserId("all", 1, null);
         assertEquals(res.get(0).getName(), "ExampleNotFinished");
-        assertEquals(res.get(0).getInFrontOfUser(), -1);
-        assertEquals(res.get(0).getNumPersons(), 1);
+        assertEquals( -1, res.get(0).getInFrontOfUser());
+        assertEquals(0, res.get(0).getNumPersons());
     }
 
     @Test
@@ -105,8 +106,9 @@ public class QueueServiceTest {
 
         List<Queue> res = queueService.getQueuesByUserId(null, 1, true);
         assertEquals(res.get(0).getName(), "ExampleFinished1");
-        assertEquals(4, res.get(0).getInFrontOfUser());
-        assertEquals(res.get(0).getNumPersons(), 1);
+        assertEquals(9, res.get(0).getInFrontOfUser());
+        assertEquals(45, res.get(0).getWaitingTimeForUser());
+        assertEquals(0, res.get(0).getNumPersons());
     }
 
     @Test
@@ -116,8 +118,9 @@ public class QueueServiceTest {
 
         List<Queue> res = queueService.getQueuesByUserId(null, 1, false);
         assertEquals(res.get(0).getName(), "ExampleNotFinished");
-        assertEquals(4, res.get(0).getInFrontOfUser());
-        assertEquals(res.get(0).getNumPersons(), 1);
+        assertEquals(9, res.get(0).getInFrontOfUser());
+        assertEquals(45, res.get(0).getWaitingTimeForUser());
+        assertEquals(0, res.get(0).getNumPersons());
     }
 
     @Test
@@ -127,8 +130,9 @@ public class QueueServiceTest {
 
         List<Queue> res = queueService.getQueuesByUserId("alluser", 1, null);
         assertEquals(res.get(0).getName(), "ExampleNotFinished");
-        assertEquals(4, res.get(0).getInFrontOfUser());
-        assertEquals(res.get(0).getNumPersons(), 1);
+        assertEquals(9, res.get(0).getInFrontOfUser());
+        assertEquals(45, res.get(0).getWaitingTimeForUser());
+        assertEquals(0, res.get(0).getNumPersons());
     }
 
     @Test
@@ -176,24 +180,9 @@ public class QueueServiceTest {
     }
 
     @Test
-    void createQueue_queueAlreadyExists_queue() {
+    void createQueue_queue(){
         Queue queueToCreate = Queue.QueueBuilder.aQueue()
                 .withJoinId(1133).build();
-        QueueDB queueDB = new QueueDB();
-        //QueueUserDB queueUserDB = new QueueUserDB();
-        Mockito.when(queueRepository.findQueueByJoinId(1133)).thenReturn(Optional.of(queueDB));
-        //Mockito.when(queueUserRepository.save(queueUserDBMock)).thenReturn(Optional.of());
-        assertThrows(QueueuAlreadyExistsException.class, () -> this.queueService.createQueue(queueToCreate, 1));
-    }
-
-    @Test
-    void createQueue_queue() {
-        Queue queueToCreate = Queue.QueueBuilder.aQueue()
-                .withJoinId(1133).build();
-        /*
-        this.queueService.createQueue(queueToCreate, 1);
-        Mockito.verify(queueRepository).save(Mockito.any());
-        */
     }
 
     @Test

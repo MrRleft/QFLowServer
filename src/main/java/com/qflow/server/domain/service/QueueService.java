@@ -71,14 +71,16 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
 
             Optional<QueueUserDB> quDB = queueUserRepository.getUserInQueue(idUser, ret.getId());
             if(quDB.isPresent()) {
-                int posUser = quDB.get().getPosition();
-                int numPersons  = ret.getCurrentPos();
-                ret.setInFrontOfUser(quDB.get().getPosition() - ret.getCurrentPos());
+                int inFrontOfUser = quDB.get().getPosition() - ret.getCurrentPos();
+                int avgServiceTime = queueDB.getAvgServiceTime();
+
+                ret.setWaitingTimeForUser(avgServiceTime * inFrontOfUser);
+                ret.setInFrontOfUser(inFrontOfUser);
             }
             else
                 ret.setInFrontOfUser(-1);
 
-            ret.setNumPersons(queueDB.getCurrentPos());
+            ret.setNumPersons(queueUserRepository.numPersonsInQueue(ret.getId()));
             queueList.add(ret);
         }
 
@@ -91,7 +93,8 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         if(!queueDBOptional.isPresent()){
             throw new QueueNotFoundException("Queue with id: " + idQueue + " not found");
         }
-        Queue ret = queueAdapter.queueDBToQueue(queueDBOptional.get());
+        QueueDB qDB = queueDBOptional.get();
+        Queue ret = queueAdapter.queueDBToQueue(qDB);
 
         ret.setNumPersons(queueUserRepository.numPersonsInQueue(idQueue));
         return ret;

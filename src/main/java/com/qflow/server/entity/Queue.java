@@ -250,5 +250,7 @@ public class Queue {
         public Queue build() {
             return new Queue(id, name, description, joinId, dateCreated, dateFinished, capacity, currentPos, isLock, businessAssociated, numPersons, inFrontOfUser, avgServiceTime, waitingTimeForUser);
         }
+
+
     }
 }

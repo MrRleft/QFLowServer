@@ -25,6 +25,7 @@ public class QueueAdapter {
                 .withName(queueDB.getName())
                 .withId(queueDB.getId())
                 .withBusinessAssociated(queueDB.getBusinessAssociated())
+                .withAvgServiceTime(queueDB.getAvgServiceTime())
                 .build();
 
     }
@@ -52,7 +53,7 @@ public class QueueAdapter {
                 .withIsLocked(queue.getLock())
                 .withJoinId(queue.getJoinId())
                 .withName(queue.getName())
-                .withAverageServiceTime(queue.getAvgServiceTime())
+                .withAvgServiceTime(queue.getAvgServiceTime())
                 .build();
     }
 
