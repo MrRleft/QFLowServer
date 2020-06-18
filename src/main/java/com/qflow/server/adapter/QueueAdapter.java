@@ -36,6 +36,7 @@ public class QueueAdapter {
                 .withCapacity(queuePost.getCapacity())
                 .withDescription(queuePost.getDescription())
                 .withName(queuePost.getName())
+                .withAvgServiceTime(queuePost.getAvgServiceTime())
                 .build();
     }
 
