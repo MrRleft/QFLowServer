@@ -10,6 +10,7 @@ public class QueuePost {
     private String description;
     private int capacity;
     private String businessAssociated;
+    private int avgServiceTime;
 
     public String getName() {
         return name;
@@ -27,12 +28,15 @@ public class QueuePost {
         return businessAssociated;
     }
 
+    public int getAvgServiceTime() { return avgServiceTime; }
+
 
     public static final class QueuePostBuilder {
         private String name;
         private String description;
         private int capacity;
         private String businessAssociated;
+        private int avgServiceTime;
 
         private QueuePostBuilder() {
         }
@@ -61,12 +65,18 @@ public class QueuePost {
             return this;
         }
 
+        public QueuePostBuilder avgServiceTime(int avgServiceTime){
+            this.avgServiceTime = avgServiceTime;
+            return this;
+        }
+
         public QueuePost build() {
             QueuePost queuePost = new QueuePost();
             queuePost.description = this.description;
             queuePost.capacity = this.capacity;
             queuePost.name = this.name;
             queuePost.businessAssociated = this.businessAssociated;
+            queuePost.avgServiceTime = this.avgServiceTime;
             return queuePost;
         }
     }
