@@ -92,6 +92,8 @@ public class QueueServiceTest {
     void getQueueById_userId_queue_AllQueues() {
         Mockito.when(queueRepository.getAllQueues()).thenReturn(Optional.of(queueDBListMock));
         Mockito.when(queueUserRepository.getUserInQueue(1, 1)).thenReturn(Optional.empty());
+        Mockito.when(queueUserRepository.getNextPerson(1)).thenReturn("NamePrueba");
+
 
         List<Queue> res = queueService.getQueuesByUserId("all", 1, null);
         assertEquals(res.get(0).getName(), "ExampleNotFinished");
@@ -103,6 +105,8 @@ public class QueueServiceTest {
     void getQueueById_userId_queue_QueuesFinished() {
         Mockito.when(queueRepository.getQueuesByUserIdFinished(1)).thenReturn(Optional.of(queueDBFinishedListMock));
         Mockito.when(queueUserRepository.getUserInQueue(1, 2)).thenReturn(Optional.of(queueUserDBMock));
+        Mockito.when(queueUserRepository.getNextPerson(2)).thenReturn("NamePrueba");
+
 
         List<Queue> res = queueService.getQueuesByUserId(null, 1, true);
         assertEquals(res.get(0).getName(), "ExampleFinished1");
@@ -115,6 +119,8 @@ public class QueueServiceTest {
     void getQueueById_userId_queue_QueuesNotFinished() {
         Mockito.when(queueRepository.getQueuesByUserIdNotFinished(1)).thenReturn(Optional.of(queueDBListMock));
         Mockito.when(queueUserRepository.getUserInQueue(1, 1)).thenReturn(Optional.of(queueUserDBMock));
+        Mockito.when(queueUserRepository.getNextPerson(1)).thenReturn("NamePrueba");
+
 
         List<Queue> res = queueService.getQueuesByUserId(null, 1, false);
         assertEquals(res.get(0).getName(), "ExampleNotFinished");
@@ -127,6 +133,8 @@ public class QueueServiceTest {
     void getQueueById_userId_queue_AllFromUser() {
         Mockito.when(queueRepository.getAllQueuesByUserId(1)).thenReturn(Optional.of(queueDBListMock));
         Mockito.when(queueUserRepository.getUserInQueue(1, 1)).thenReturn(Optional.of(queueUserDBMock));
+        Mockito.when(queueUserRepository.getNextPerson(1)).thenReturn("NamePrueba");
+
 
         List<Queue> res = queueService.getQueuesByUserId("alluser", 1, null);
         assertEquals(res.get(0).getName(), "ExampleNotFinished");
@@ -168,6 +176,7 @@ public class QueueServiceTest {
     void getQueueById_queueId_queue() {
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.of(queueDBMock));
         Mockito.when(queueUserRepository.numPersonsInQueue(1)).thenReturn(30);
+        Mockito.when(queueUserRepository.getNextPerson(1)).thenReturn("NamePrueba");
 
         Queue res = queueService.getQueueByQueueId(1);
         assertEquals(res.getName(), "ExampleNotFinished");
