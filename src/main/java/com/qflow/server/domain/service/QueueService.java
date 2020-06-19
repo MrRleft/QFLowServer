@@ -81,6 +81,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
                 ret.setInFrontOfUser(-1);
 
             ret.setNumPersons(queueUserRepository.numPersonsInQueue(ret.getId()));
+            ret.setNextPerson(queueUserRepository.getNextPerson(ret.getId()));
             queueList.add(ret);
         }
 
@@ -97,6 +98,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         Queue ret = queueAdapter.queueDBToQueue(qDB);
 
         ret.setNumPersons(queueUserRepository.numPersonsInQueue(idQueue));
+        ret.setNextPerson(queueUserRepository.getNextPerson(idQueue));
         return ret;
     }
 

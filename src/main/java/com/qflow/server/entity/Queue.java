@@ -21,11 +21,12 @@ public class Queue {
     private int inFrontOfUser;
     private int avgServiceTime;
     private int waitingTimeForUser;
+    private String nextPerson;
 
     public Queue() {
     }
 
-    public Queue(int id, String name, String description, int joinId, Timestamp dateCreated, Timestamp dateFinished, int capacity, int currentPos, Boolean isLock, String businessAssociated, int numPersons, int inFrontOfUser, int avgServiceTime, int waitingTimeForUser) {
+    public Queue(int id, String name, String description, int joinId, Timestamp dateCreated, Timestamp dateFinished, int capacity, int currentPos, Boolean isLock, String businessAssociated, int numPersons, int inFrontOfUser, int avgServiceTime, int waitingTimeForUser, String nextPerson) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -40,6 +41,7 @@ public class Queue {
         this.inFrontOfUser = inFrontOfUser;
         this.avgServiceTime = avgServiceTime;
         this.waitingTimeForUser = waitingTimeForUser;
+        this.nextPerson = nextPerson;
     }
 
     public int getId() {
@@ -98,6 +100,10 @@ public class Queue {
         return waitingTimeForUser;
     }
 
+    public String getNextPerson() {
+        return nextPerson;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -154,6 +160,10 @@ public class Queue {
         this.waitingTimeForUser = waitingTimeForUser;
     }
 
+    public void setNextPerson(String nextPerson) {
+        this.nextPerson = nextPerson;
+    }
+
 
     public static final class QueueBuilder {
         private int id;
@@ -170,8 +180,10 @@ public class Queue {
         private int inFrontOfUser;
         private int avgServiceTime;
         private int waitingTimeForUser;
+        private String nextPerson;
 
-
+        private QueueBuilder() {
+        }
 
         public static QueueBuilder aQueue() {
             return new QueueBuilder();
@@ -247,10 +259,13 @@ public class Queue {
             return this;
         }
 
-        public Queue build() {
-            return new Queue(id, name, description, joinId, dateCreated, dateFinished, capacity, currentPos, isLock, businessAssociated, numPersons, inFrontOfUser, avgServiceTime, waitingTimeForUser);
+        public QueueBuilder withNextPerson(String nextPerson) {
+            this.nextPerson = nextPerson;
+            return this;
         }
 
-
+        public Queue build() {
+            return new Queue(id, name, description, joinId, dateCreated, dateFinished, capacity, currentPos, isLock, businessAssociated, numPersons, inFrontOfUser, avgServiceTime, waitingTimeForUser, nextPerson);
+        }
     }
 }
