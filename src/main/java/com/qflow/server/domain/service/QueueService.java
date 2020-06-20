@@ -53,10 +53,18 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
                 queueDBListOptional = queueRepository.getAllQueues();
             else
                 throw new QueueNotFoundException("expand value not identified");
-        }else if(finished)
-            queueDBListOptional = queueRepository.getQueuesByUserIdFinished(idUser);
-        else
-            queueDBListOptional = queueRepository.getQueuesByUserIdNotFinished(idUser);
+        }else if(finished) {
+            if (expand.equalsIgnoreCase("creator"))
+                queueDBListOptional = queueRepository.getQueuesByUserIdFinished(idUser);
+            else if (expand.equalsIgnoreCase("user"))
+                queueDBListOptional = queueRepository.getAllQueuesByUserIdPastDate(idUser);
+        }
+        else{
+            if(expand.equalsIgnoreCase("creator"))
+                queueDBListOptional = queueRepository.getQueuesByUserIdNotFinished(idUser);
+            else if(expand.equalsIgnoreCase("user"))
+                queueDBListOptional = queueRepository.getAllQueuesByUserIdCurrentDate(idUser);
+        }
 
         if(!queueDBListOptional.isPresent()){
             throw new QueueNotFoundException("Queues not found");
@@ -68,17 +76,20 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
 
             Optional<QueueUserDB> quDB = queueUserRepository.getUserInQueue(idUser, ret.getId());
             if(quDB.isPresent()) {
+
                 int inFrontOfUser = quDB.get().getPosition() - ret.getCurrentPos();
                 int avgServiceTime = queueDB.getAvgServiceTime();
 
-                ret.setWaitingTimeForUser(avgServiceTime * inFrontOfUser);
-                ret.setInFrontOfUser(inFrontOfUser);
-            }
-            else
-                ret.setInFrontOfUser(-1);
+                ret.setNumPersons(queueUserRepository.numPersonsInQueue(ret.getId()));
+                ret.setNextPerson(queueUserRepository.getNextPerson(ret.getId()));
 
-            ret.setNumPersons(queueUserRepository.numPersonsInQueue(ret.getId()));
-            ret.setNextPerson(queueUserRepository.getNextPerson(ret.getId()));
+                ret.setInFrontOfUser(inFrontOfUser);
+                ret.setWaitingTimeForUser(avgServiceTime * inFrontOfUser);
+
+            }
+            else{
+                ret.setInFrontOfUser(-1);
+            }
             queueList.add(ret);
         }
 
@@ -265,3 +276,21 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
 
     }
 }
+
+/*if(!finished && expand.equalsIgnoreCase("user")){    //Looking for not finished User Queues
+                    if(inFrontOfUser >= 0){
+                        ret.setInFrontOfUser(inFrontOfUser);
+                        ret.setWaitingTimeForUser(avgServiceTime * inFrontOfUser);
+                        queueList.add(ret);
+                    }
+                }else if(finished && expand.equalsIgnoreCase("user")){  //looking for finished User Queues
+                    if(inFrontOfUser < 0){
+                        ret.setInFrontOfUser(inFrontOfUser);
+                        ret.setWaitingTimeForUser(avgServiceTime * inFrontOfUser);
+                        queueList.add(ret);
+                    }
+                }else if(expand.equalsIgnoreCase("creator")){      //rest of the cases
+                    ret.setWaitingTimeForUser(-1);
+                    ret.setInFrontOfUser(-1);
+                    queueList.add(ret);
+                }else{*/

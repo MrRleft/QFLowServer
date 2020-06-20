@@ -70,4 +70,18 @@ public interface QueueRepository extends JpaRepository<QueueDB, Integer> {
             "    ORDER BY q.is_locked ASC",
             nativeQuery = true)
     Optional<List<QueueDB>> getQueuesByUserIdNotFinished(Integer userId);
+
+    @Query(value = "SELECT *  FROM queue q JOIN queue_user qu ON " +
+            "q.id = qu.id_queue_qu_fk JOIN info_user_queue iuq ON q.id = iuq.id_queue_iuq_fk " +
+            "AND qu.id_user_qu_fk = :userId AND iuq.id_user_iuq_fk = :userId " +
+            "AND (q.date_finished IS NOT NULL OR iuq.date_success IS NOT NULL) ",
+            nativeQuery = true)
+    Optional<List<QueueDB>> getAllQueuesByUserIdPastDate(Integer userId);
+
+    @Query(value = "SELECT *  FROM queue q JOIN queue_user qu ON " +
+            "q.id = qu.id_queue_qu_fk JOIN info_user_queue iuq ON q.id = iuq.id_queue_iuq_fk " +
+            "AND qu.id_user_qu_fk = :userId AND iuq.id_user_iuq_fk = :userId " +
+            "AND q.date_finished IS NULL AND iuq.date_success IS NULL",
+            nativeQuery = true)
+    Optional<List<QueueDB>> getAllQueuesByUserIdCurrentDate(Integer userId);
 }
