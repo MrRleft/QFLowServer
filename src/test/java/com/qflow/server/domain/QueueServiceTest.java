@@ -7,9 +7,7 @@ import com.qflow.server.domain.repository.QueueRepository;
 import com.qflow.server.domain.repository.QueueUserRepository;
 import com.qflow.server.domain.repository.dto.*;
 import com.qflow.server.domain.service.QueueService;
-import com.qflow.server.entity.InfoUserQueue;
 import com.qflow.server.entity.Queue;
-import com.qflow.server.entity.QueueUser;
 import com.qflow.server.entity.exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,7 +79,7 @@ public class QueueServiceTest {
         queueDBFinishedListMock = new ArrayList<>();
         queueDBFinishedListMock.add(queueDBMockFinished1);
 
-        queueUserDBMock = new QueueUserDB(1, 1, 1, true, false, 10);
+        queueUserDBMock = new QueueUserDB(1, 1, 1, true, true, 10);
         infoUserQueueDB = new InfoUserQueueDB(1, 1);
         activePeriodDB = new ActivePeriodDB(1, Timestamp.from(instant), null);
     }
@@ -307,6 +305,8 @@ public class QueueServiceTest {
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.of(queueDBMock));
         Mockito.when(queueUserRepository.getUserInQueue(1, 1)).thenReturn(Optional.of(queueUserDBMock));
         Mockito.when(infoUserQueueRepository.getUserInInfoUserQueue(1, 1)).thenReturn(Optional.of(infoUserQueueDB));
+        Mockito.when(queueUserRepository.getNextPersonId(1)).thenReturn(1);
+
 
         queueService.advanceQueue(1, 1);
 
@@ -333,7 +333,7 @@ public class QueueServiceTest {
     void advanceQueue_UserNotInQueue_ThrowsExc() {
         Mockito.when(queueRepository.findById(1)).thenReturn(Optional.of(queueDBMock));
 
-        assertThrows(UserNotInQueueException.class, () -> queueService.advanceQueue(1, 1));
+        assertThrows(UserIsNotAdminException.class, () -> queueService.advanceQueue(1, 1));
     }
 
 }
