@@ -26,7 +26,7 @@ public interface QueueUserRepository extends JpaRepository<QueueUserDB, Integer>
     @Query(value = "SELECT COUNT(id_queue_qu_fk) " +
             "FROM queue_user " +
             "WHERE is_active = true" +
-            " AND id_queue_qu_fk = :id_queue_qu_fk ",
+            " AND id_queue_qu_fk = :id_queue_qu_fk AND is_admin = false",
             nativeQuery = true)
     Integer numPersonsInQueue(@Param("id_queue_qu_fk") int idQueue);
 
