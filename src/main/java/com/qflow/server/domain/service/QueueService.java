@@ -246,7 +246,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         Integer idUserToAdvance = queueUserRepository.getNextPersonId(idQueue);
 
         Optional<InfoUserQueueDB> infoUserQueueDB = infoUserQueueRepository.getUserInInfoUserQueue(idUserToAdvance, idQueue);
-        Optional<QueueUserDB> queueUserDB = queueUserRepository.getUserInQueue(idUser, idQueue);
+        Optional<QueueUserDB> queueUserDB = queueUserRepository.getUserInQueue(idUserToAdvance, idQueue);
         if(!infoUserQueueDB.isPresent() || !queueUserDB.isPresent() || !queueUserDB.get().getActive())
             throw new UserIsNotInQueue("User with id " + idUserToAdvance + " not in queue " + idQueue );
 
