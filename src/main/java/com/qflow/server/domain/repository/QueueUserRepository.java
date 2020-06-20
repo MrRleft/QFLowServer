@@ -18,7 +18,10 @@ public interface QueueUserRepository extends JpaRepository<QueueUserDB, Integer>
     @Query(value = "SELECT * " +
             "FROM queue_user " +
             "WHERE id_user_qu_fk = :id_user_qu_fk" +
-            " AND id_queue_qu_fk = :id_queue_qu_fk ",
+            " AND id_queue_qu_fk = :id_queue_qu_fk " +
+            "ORDER BY queue_user.position " +
+            "LIMIT 1",
+
             nativeQuery = true)
     Optional<QueueUserDB> getUserInQueue(@Param("id_user_qu_fk") int idUser,
                               @Param("id_queue_qu_fk") int idQueue);
