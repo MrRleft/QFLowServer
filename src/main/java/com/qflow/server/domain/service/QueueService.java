@@ -9,12 +9,9 @@ import com.qflow.server.domain.repository.dto.ActivePeriodDB;
 import com.qflow.server.domain.repository.dto.InfoUserQueueDB;
 import com.qflow.server.domain.repository.dto.QueueDB;
 import com.qflow.server.domain.repository.dto.QueueUserDB;
-import com.qflow.server.entity.ActivePeriod;
 import com.qflow.server.entity.Queue;
 import com.qflow.server.entity.exceptions.*;
 import com.qflow.server.usecase.queues.*;
-import io.micrometer.shaded.org.pcollections.PQueue;
-import net.bytebuddy.dynamic.TypeResolutionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -81,6 +78,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
                 ret.setInFrontOfUser(-1);
 
             ret.setNumPersons(queueUserRepository.numPersonsInQueue(ret.getId()));
+            ret.setNextPerson(queueUserRepository.getNextPerson(ret.getId()));
             queueList.add(ret);
         }
 
@@ -97,6 +95,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         Queue ret = queueAdapter.queueDBToQueue(qDB);
 
         ret.setNumPersons(queueUserRepository.numPersonsInQueue(idQueue));
+        ret.setNextPerson(queueUserRepository.getNextPerson(idQueue));
         return ret;
     }
 
@@ -240,10 +239,16 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         if(queueDB.get().getLocked())
             throw new QueueLockedException("Queue with id: " + idQueue + " is locked");
 
-        Optional<InfoUserQueueDB> infoUserQueueDB = infoUserQueueRepository.getUserInInfoUserQueue(idUser, idQueue);
+        Optional<QueueUserDB> queueAdminDB = queueUserRepository.getUserInQueue(idUser, idQueue);
+        if(!queueAdminDB.isPresent() || !queueAdminDB.get().getAdmin())
+            throw new UserIsNotAdminException("User with id " + idUser + " not admin in queue " + idQueue );
+
+        Integer idUserToAdvance = queueUserRepository.getNextPersonId(idQueue);
+
+        Optional<InfoUserQueueDB> infoUserQueueDB = infoUserQueueRepository.getUserInInfoUserQueue(idUserToAdvance, idQueue);
         Optional<QueueUserDB> queueUserDB = queueUserRepository.getUserInQueue(idUser, idQueue);
         if(!infoUserQueueDB.isPresent() || !queueUserDB.isPresent() || !queueUserDB.get().getActive())
-            throw new UserNotInQueueException("User with id " + idUser + " not in queue " + idQueue );
+            throw new UserIsNotInQueue("User with id " + idUserToAdvance + " not in queue " + idQueue );
 
         updateDataAdvanceQueue(queueDB.get(), infoUserQueueDB.get(), queueUserDB.get());
 
