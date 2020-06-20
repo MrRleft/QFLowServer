@@ -26,7 +26,7 @@ public interface QueueUserRepository extends JpaRepository<QueueUserDB, Integer>
     @Query(value = "SELECT COUNT(id_queue_qu_fk) " +
             "FROM queue_user " +
             "WHERE is_active = true" +
-            " AND id_queue_qu_fk = :id_queue_qu_fk ",
+            " AND id_queue_qu_fk = :id_queue_qu_fk AND is_admin = false",
             nativeQuery = true)
     Integer numPersonsInQueue(@Param("id_queue_qu_fk") int idQueue);
 
@@ -36,6 +36,13 @@ public interface QueueUserRepository extends JpaRepository<QueueUserDB, Integer>
             "ORDER BY date_access DESC LIMIT 1",
             nativeQuery = true)
     String getNextPerson(@Param("id_queue_iuq_fk") int id_queue_iuq_fk);
+
+    @Query(value= "SELECT u.id " +
+            "FROM users u JOIN info_user_queue iuq ON u.id = iuq.id_user_iuq_fk " +
+            "WHERE iuq.id_queue_iuq_fk = :id_queue_iuq_fk AND iuq.date_success IS NULL " +
+            "ORDER BY date_access DESC LIMIT 1",
+            nativeQuery = true)
+    Integer getNextPersonId(@Param("id_queue_iuq_fk") int id_queue_iuq_fk);
 }
 
 //JOIN queue_user qu ON u.id = qu.id_user_qu_fk
