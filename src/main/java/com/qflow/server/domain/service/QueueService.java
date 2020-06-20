@@ -239,9 +239,8 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         if(queueDB.get().getLocked())
             throw new QueueLockedException("Queue with id: " + idQueue + " is locked");
 
-        Optional<InfoUserQueueDB> infoAdminUserQueueDB = infoUserQueueRepository.getUserInInfoUserQueue(idUser, idQueue);
         Optional<QueueUserDB> queueAdminDB = queueUserRepository.getUserInQueue(idUser, idQueue);
-        if(!infoAdminUserQueueDB.isPresent() || !queueAdminDB.isPresent() || !queueAdminDB.get().getAdmin())
+        if(!queueAdminDB.isPresent() || !queueAdminDB.get().getAdmin())
             throw new UserIsNotAdminException("User with id " + idUser + " not admin in queue " + idQueue );
 
         Integer idUserToAdvance = queueUserRepository.getNextPersonId(idQueue);
@@ -249,7 +248,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         Optional<InfoUserQueueDB> infoUserQueueDB = infoUserQueueRepository.getUserInInfoUserQueue(idUserToAdvance, idQueue);
         Optional<QueueUserDB> queueUserDB = queueUserRepository.getUserInQueue(idUser, idQueue);
         if(!infoUserQueueDB.isPresent() || !queueUserDB.isPresent() || !queueUserDB.get().getActive())
-            throw new UserIsNotInQueue("User with id " + idUser + " not in queue " + idQueue );
+            throw new UserIsNotInQueue("User with id " + idUserToAdvance + " not in queue " + idQueue );
 
         updateDataAdvanceQueue(queueDB.get(), infoUserQueueDB.get(), queueUserDB.get());
 
