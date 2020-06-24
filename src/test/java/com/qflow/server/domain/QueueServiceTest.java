@@ -43,6 +43,7 @@ public class QueueServiceTest {
     private UserDB userDBMock;
 
     private QueueUserDB queueUserDBMock;
+    private QueueUserDB queueUserDBMock2;
 
     @Mock
     private QueueUserRepository queueUserRepository;
@@ -56,6 +57,7 @@ public class QueueServiceTest {
     private InfoUserQueueRepository infoUserQueueRepository;
 
     private InfoUserQueueDB infoUserQueueDB;
+    private InfoUserQueueDB infoUserQueueDB2;
 
     @BeforeEach
     void setUp() {
@@ -80,7 +82,9 @@ public class QueueServiceTest {
         queueDBFinishedListMock.add(queueDBMockFinished1);
 
         queueUserDBMock = new QueueUserDB(1, 1, 1, true, true, 10);
+        queueUserDBMock2 = new QueueUserDB(1, 1, 1, false, false, 10);
         infoUserQueueDB = new InfoUserQueueDB(1, 1);
+        infoUserQueueDB2 = new InfoUserQueueDB(1,1, Timestamp.from(instant), Timestamp.from(instant.plusMillis(100)));
         activePeriodDB = new ActivePeriodDB(1, Timestamp.from(instant), null);
     }
 
@@ -297,6 +301,19 @@ public class QueueServiceTest {
         Mockito.when(queueRepository.getCapacity(1)).thenReturn(100);
         Mockito.when(queueUserRepository.numPersonsInQueue(1)).thenReturn(50);
         assertThrows(UserAlreadyInQueue.class, () -> this.queueService.joinQueue(123, 1));
+    }
+    @Test
+    void joinQueue_reJoin() {
+        Mockito.when(queueRepository.getIdQueueByJoinId(123)).thenReturn(1);
+        Mockito.when(queueUserRepository.getUserInQueue(1, 1)).thenReturn(Optional.of(queueUserDBMock2));
+        Mockito.when(infoUserQueueRepository.getUserInInfoUserQueue(1, 1)).thenReturn(Optional.of(infoUserQueueDB2));
+        Mockito.when(queueRepository.getCapacity(1)).thenReturn(100);
+        Mockito.when(queueUserRepository.numPersonsInQueue(1)).thenReturn(50);
+
+        int idCola = queueService.joinQueue(123, 1);
+        assertEquals(1, idCola);
+        Mockito.verify(queueUserRepository).save(Mockito.any());
+        Mockito.verify(infoUserQueueRepository).save(Mockito.any());
     }
 
     //-------------------------------- AdvanceQueueByQueueIdAndUserId---------------------------------------------------------------------------
