@@ -46,10 +46,17 @@ public class InfoUserQueueDB {
     }
 
     public InfoUserQueueDB(Integer idQueue, Integer idUser) {
-        this.id = id;
         this.idQueue = idQueue;
         this.idUser = idUser;
         this.dateAccess = new Timestamp(new Date().getTime());
+        this.unattended = false;
+    }
+
+    public InfoUserQueueDB(Integer idQueue, Integer idUser, Timestamp dateAccess, Timestamp dateSuccess) {
+        this.idQueue = idQueue;
+        this.idUser = idUser;
+        this.dateAccess = dateAccess;
+        this.dateSuccess = dateSuccess;
         this.unattended = false;
     }
 

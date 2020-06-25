@@ -150,16 +150,37 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
 
     @Override
     public Integer joinQueue(Integer joinCode, Integer idUser) {
+        //Id de la cola
         Integer idQueue = queueRepository.getIdQueueByJoinId(joinCode);
+
+        //Te dice el usuario que está en esa cola
         Optional<QueueUserDB> queueUser = queueUserRepository.getUserInQueue(idUser, idQueue);
+
+        //La info de ese user en esa cola
         Optional<InfoUserQueueDB> infoUserQueue = infoUserQueueRepository.getUserInInfoUserQueue(idUser, idQueue);
+
+        //La capacidad de esa cola
         Integer capacity = queueRepository.getCapacity(idQueue);
+        //El numero de personas en cola
         Integer numQueues = queueUserRepository.numPersonsInQueue(idQueue);
+        //Posicion ultima de la cola para saber que pos tendra
+        Integer pos = queueUserRepository.getLastPosition(idQueue);
+        //Comprobar que quepa
         if(capacity > numQueues) {
+            //Primera vez que se une
             if (!queueUser.isPresent() && !infoUserQueue.isPresent()) {
-                Integer pos = queueUserRepository.getLastPosition(idQueue);
                 QueueUserDB queueUserDB = new QueueUserDB(idQueue, idUser, pos + 1);
-                QueueUserDB queueUserDBInput = queueUserRepository.save(queueUserDB);
+                queueUserRepository.save(queueUserDB);
+                InfoUserQueueDB infoUserQueueDB = new InfoUserQueueDB(idQueue, idUser);
+                infoUserQueueRepository.save(infoUserQueueDB);
+                return idQueue;
+            }
+            //Ya tiene datos de él en esa cola y ya ha pasado por ella pero se quiere unir de nuevo
+            else if (!queueUser.get().getActive() && infoUserQueue.get().getDateSuccess() != null) {
+                QueueUserDB queueUserDB = queueUser.get();
+                queueUserDB.setActive(true);
+                queueUserDB.setPosition(pos+1);
+                queueUserRepository.save(queueUserDB);
                 InfoUserQueueDB infoUserQueueDB = new InfoUserQueueDB(idQueue, idUser);
                 infoUserQueueRepository.save(infoUserQueueDB);
                 return idQueue;
@@ -257,7 +278,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         Integer idUserToAdvance = queueUserRepository.getNextPersonId(idQueue);
 
         Optional<InfoUserQueueDB> infoUserQueueDB = infoUserQueueRepository.getUserInInfoUserQueue(idUserToAdvance, idQueue);
-        Optional<QueueUserDB> queueUserDB = queueUserRepository.getUserInQueue(idUser, idQueue);
+        Optional<QueueUserDB> queueUserDB = queueUserRepository.getUserInQueue(idUserToAdvance, idQueue);
         if(!infoUserQueueDB.isPresent() || !queueUserDB.isPresent() || !queueUserDB.get().getActive())
             throw new UserIsNotInQueue("User with id " + idUserToAdvance + " not in queue " + idQueue );
 
@@ -276,21 +297,3 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
 
     }
 }
-
-/*if(!finished && expand.equalsIgnoreCase("user")){    //Looking for not finished User Queues
-                    if(inFrontOfUser >= 0){
-                        ret.setInFrontOfUser(inFrontOfUser);
-                        ret.setWaitingTimeForUser(avgServiceTime * inFrontOfUser);
-                        queueList.add(ret);
-                    }
-                }else if(finished && expand.equalsIgnoreCase("user")){  //looking for finished User Queues
-                    if(inFrontOfUser < 0){
-                        ret.setInFrontOfUser(inFrontOfUser);
-                        ret.setWaitingTimeForUser(avgServiceTime * inFrontOfUser);
-                        queueList.add(ret);
-                    }
-                }else if(expand.equalsIgnoreCase("creator")){      //rest of the cases
-                    ret.setWaitingTimeForUser(-1);
-                    ret.setInFrontOfUser(-1);
-                    queueList.add(ret);
-                }else{*/

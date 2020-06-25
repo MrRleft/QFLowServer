@@ -52,6 +52,10 @@ public class QueueUserDB {
         isActive = active;
     }
 
+    public void setPosition(Integer position) {
+        this.position = position;
+    }
+
     public QueueUserDB(Integer id, Integer idQueue, Integer idUser, Boolean isActive,
                        Boolean isAdmin, Integer position) {
         this.id = id;
