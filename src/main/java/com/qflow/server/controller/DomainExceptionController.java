@@ -33,4 +33,9 @@ public class DomainExceptionController {
     public final ResponseEntity<String> QueueLockedException(Exception ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(EmptyQueueListException.class)
+    public final ResponseEntity<String> EmptyQueueListException(Exception ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NO_CONTENT);
+    }
 }

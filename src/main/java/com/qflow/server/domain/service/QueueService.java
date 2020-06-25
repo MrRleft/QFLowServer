@@ -67,7 +67,7 @@ public class QueueService implements GetQueuesByUserIdDatabase, GetQueueByQueueI
         }
 
         if(!queueDBListOptional.isPresent()){
-            throw new QueueNotFoundException("Queues not found");
+            throw new EmptyQueueListException("Queues not found");
         }
 
         List<Queue> queueList = new ArrayList<>();
