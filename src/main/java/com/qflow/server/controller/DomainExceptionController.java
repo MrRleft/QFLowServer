@@ -36,6 +36,6 @@ public class DomainExceptionController {
 
     @ExceptionHandler(EmptyQueueListException.class)
     public final ResponseEntity<String> EmptyQueueListException(Exception ex) {
-        return new ResponseEntity<>("", HttpStatus.OK);
+        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
 }

@@ -15,6 +15,7 @@ public class ResumeQueue {
 
     public Queue execute(int idQueue){
         Queue queue = getQueueByQueueId.execute(idQueue);
-        return resumeQueueDataBase.resumeQueue(queue);
+        resumeQueueDataBase.resumeQueue(queue);
+        return getQueueByQueueId.execute(idQueue);
     }
 }

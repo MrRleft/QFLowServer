@@ -15,6 +15,7 @@ public class StopQueue {
 
     public Queue execute(int idQueue){
         Queue queue = getQueueByQueueId.execute(idQueue);
-        return stopQueueDatabase.stopQueue(queue);
+        stopQueueDatabase.stopQueue(queue);
+        return getQueueByQueueId.execute(idQueue);
     }
 }

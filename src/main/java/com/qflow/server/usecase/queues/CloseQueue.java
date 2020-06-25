@@ -15,6 +15,7 @@ public class CloseQueue {
 
     public Queue execute(int idQueue) {
         Queue queue = getQueueByQueueId.execute(idQueue);
-        return closeQueueDatabase.closeQueue(queue);
+        closeQueueDatabase.closeQueue(queue);
+        return getQueueByQueueId.execute(idQueue);
     }
 }
